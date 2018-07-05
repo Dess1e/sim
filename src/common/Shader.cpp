@@ -37,7 +37,6 @@ Shader::Shader(std::string _shader_name)
     GLint Result = GL_FALSE;
     int InfoLogLength;
 
-
     // Compile Vertex Shader
     printf("Compiling vertex shader : %s\n", shader_name.c_str());
     char const * VertexSourcePointer = VertexShaderCode.c_str();
@@ -53,8 +52,6 @@ Shader::Shader(std::string _shader_name)
         printf("%s\n", &VertexShaderErrorMessage[0]);
     }
 
-
-
     // Compile Fragment Shader
     printf("Compiling fragment shader : %s\n", _shader_name.c_str());
     char const * FragmentSourcePointer = FragmentShaderCode.c_str();
@@ -69,8 +66,6 @@ Shader::Shader(std::string _shader_name)
         glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
         printf("%s\n", &FragmentShaderErrorMessage[0]);
     }
-
-
 
     // Link the program
     printf("Linking shader...\n");
@@ -98,10 +93,15 @@ Shader::Shader(std::string _shader_name)
     this->id = ProgramID;
 }
 
-void Shader::Use()
+void Shader::use()
 {
     if (this->id)
         glUseProgram(this->id);
     else
-        printf("Shader with name %s have invalid id and cannot be used", this->shader_name.c_str());
+        throw ShaderUseException(this->shader_name);
+}
+
+GLuint Shader::getUniform(std::string uniform_name)
+{
+    return glGetUniformLocation(this->id, uniform_name.c_str());
 }

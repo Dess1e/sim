@@ -33,32 +33,33 @@ public:
     void loadShader(std::string name);
     void useShader(std::string name);
     void debugPrint(unsigned char level, std::string message);
+    void quit();
     glm::mat4 calculateMVP(float ratio, float nearz, float farz);
 
     GLFWwindow * main_window;
     ResourceLoader resource_loader = ResourceLoader();
     double last_time;
     double delta_time;
-    struct _GLVariables
+    struct GLVariables
     {
         GLuint vertex_array_id;
         GLuint vertex_buffer;
         GLuint color_buffer;
-        std::map<std::string, Shader> shaders;
-        Shader current_shader;
-    } gl_variables;
-    struct _Options
+        std::map<std::string, Shader *> shaders;
+        Shader * current_shader;
+    } * gl_variables = new GLVariables;
+    struct Options
     {
         float player_speed;
         float mouse_speed;
         float player_fov;
     } options;
-    struct _HWSpecs
+    struct HWSpecs
     {
         float scr_h;
         float scr_w;
     } hw_specs;
-    struct _Player
+    struct Player
     {
         glm::vec3 player_pos;
         float horizontal_angle;
@@ -68,4 +69,7 @@ public:
 private:
     World world;
 };
+
+
+
 #endif

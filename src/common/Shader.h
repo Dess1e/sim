@@ -12,7 +12,8 @@ class Shader
 {
 public:
     Shader(std::string path);
-    void Use();
+    void use();
+    GLuint getUniform(std::string uniform_name);
     unsigned int id;
     std::string shader_name;
 };
@@ -21,6 +22,10 @@ class ShaderCreateException : public std::exception
 {
 public:
     std::string error;
+    ShaderCreateException()
+    {
+        this->error = "";
+    }
     ShaderCreateException(std::string shader_name, std::string where)
     {
         this->error = "Exception: shader with name " + shader_name + " failed to load.\n" + where + "\n";
@@ -31,6 +36,14 @@ public:
     }
 };
 
+class ShaderUseException : public ShaderCreateException
+{
+public:
+    ShaderUseException(std::string shader_name) : ShaderCreateException()
+    {
+        this->error = "Exception: cannot use shader with name " + shader_name + ", invalid shader id";
+    }
+};
 
 #endif
 

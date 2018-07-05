@@ -2,7 +2,7 @@
 
 Engine::Engine()
 {
-    //engine class constructor
+
     this->world = World();
     this->options.player_speed = 3;
     this->player.player_pos = glm::vec3(3, 0, 3);
@@ -28,22 +28,28 @@ void Engine::debugPrint(unsigned char level, std::string message)
     default:
     case DBG_LEVEL_FATAL:
         printf("[FATAL]: %s", message.c_str());
-        this->quit(1);
+        this->quit();
     }
 }
 
-void Engine::quit(unsigned int code)
+void Engine::quit()
 {
-    quick_exit(code);
+    glDeleteBuffers(1, &this->gl_variables->vertex_buffer);
+    glDeleteBuffers(1, &this->gl_variables->color_buffer);
+    for (const auto& kv : this->gl_variables->shaders)
+    {
+        Shader * curr = kv.second;
+        glDeleteProgram(curr->id);
+    }
+    glDeleteVertexArrays(1, &this->gl_variables->vertex_array_id);
+    glfwTerminate();
 }
 
 void Engine::loadShader(std::string name)
 {
     try
     {
-        auto loaded_shader = Shader(name);
-        auto shader_map = this->gl_variables.shaders;
-        shader_map[name] = loaded_shader;
+        this->gl_variables->shaders[name] = new Shader(name);
     }
     catch (ShaderCreateException& e)
     {
@@ -53,24 +59,23 @@ void Engine::loadShader(std::string name)
 }
 void Engine::useShader(std::string name)
 {
-    auto shader_map = this->gl_variables.shaders;
+    auto shader_map = this->gl_variables->shaders;
     if (!shader_map.count(name))
     {
         this->debugPrint(DBG_LEVEL_ERROR, "No compiled/linked shader with name %s found");
         return;
     }
-    this->gl_variables.current_shader = shader_map[name];
-    this->gl_variables.current_shader.Use();
+    this->gl_variables->current_shader = shader_map[name];
+    this->gl_variables->current_shader->use();
 }
 void Engine::mainloop()
 {
-    GLuint MatrixID = glGetUniformLocation(this->gl_variables.shaders_id,
-                                           "model_projection_mat");
+    GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
 
     GLuint texture = this->resource_loader.LoadTextureBMP("textures/texture.bmp");
-    GLuint texture_id = glGetUniformLocation(this->gl_variables.shaders_id, "texture_sampler");
+    GLuint texture_id = this->gl_variables->current_shader->getUniform("texture_sampler");
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -91,13 +96,7 @@ void Engine::mainloop()
     }
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(this->main_window) == 0);
-
-    glDeleteBuffers(1, &this->gl_variables.vertex_buffer);
-    glDeleteBuffers(1, &this->gl_variables.color_buffer);
-    glDeleteProgram(this->gl_variables.shaders_id);
-    glDeleteVertexArrays(1, &this->gl_variables.vertex_array_id);
-    glfwTerminate();
-
+    this->quit();
     return;
 }
 
@@ -138,12 +137,11 @@ void Engine::init()
 
     glClearColor(0, 0, 0, 0);
 
-    glGenVertexArrays(1, &this->gl_variables.vertex_array_id);
-    glBindVertexArray(this->gl_variables.vertex_array_id);
+    glGenVertexArrays(1, &this->gl_variables->vertex_array_id);
+    glBindVertexArray(this->gl_variables->vertex_array_id);
 
-    auto simple_shader = Shader("simple");
-    this->gl_variables.shaders["simple"] = simple_shader;
-    simple_shader.Use();
+    this->loadShader("simple");
+    this->useShader("simple");
 
     static const GLfloat vertex_buffer[] = {
         -1.0f,-1.0f,-1.0f, // triangle 1 : begin
@@ -222,13 +220,13 @@ void Engine::init()
         0.667979f, 1.0f-0.335851f
     };
 
-    glGenBuffers(1, &this->gl_variables.vertex_buffer);
-    glGenBuffers(1, &this->gl_variables.color_buffer);
+    glGenBuffers(1, &this->gl_variables->vertex_buffer);
+    glGenBuffers(1, &this->gl_variables->color_buffer);
 
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables.vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer)/*size of vbuf*/,
                  vertex_buffer, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables.color_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->color_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer)/*size of cbuf*/,
                  uv_buffer, GL_STATIC_DRAW);
 
@@ -238,11 +236,11 @@ void Engine::init()
     glDepthFunc(GL_LESS);
 
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables.vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->vertex_buffer);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables.color_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->color_buffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 
@@ -257,29 +255,29 @@ void Engine::calcPlayerView()
 
     float scr_w = this->hw_specs.scr_w, scr_h = this->hw_specs.scr_h;
     glfwSetCursorPos(this->main_window, scr_w / 2, scr_h / 2);
-    Engine::_Options& options = this->options;
-    Engine::_Player * player = &this->player;
+    Engine::Options& options = this->options;
+    Engine::Player& player = this->player;
 
     auto delta_time = this->delta_time;
-    player->horizontal_angle += options.mouse_speed * delta_time * (scr_w / 2 - xpos);
+    player.horizontal_angle += options.mouse_speed * delta_time * (scr_w / 2 - xpos);
     auto vert_angle_increment = options.mouse_speed * delta_time * (scr_h / 2 - ypos);
-    if (player->vertical_angle + vert_angle_increment > 3.14)
-        player->vertical_angle = 3.14;
-    else if (player->vertical_angle + vert_angle_increment < -3.14)
-        player->vertical_angle = -3.14;
+    if (player.vertical_angle + vert_angle_increment > 3.14)
+        player.vertical_angle = 3.14;
+    else if (player.vertical_angle + vert_angle_increment < -3.14)
+        player.vertical_angle = -3.14;
     else
-        player->vertical_angle += vert_angle_increment;
-    glm::vec3 direction( cos(player->vertical_angle) * sin(player->horizontal_angle),
-                         sin(player->vertical_angle),
-                         cos(player->vertical_angle) * cos(player->horizontal_angle));
-    glm::vec3 right(sin(player->horizontal_angle - 3.14 / 2.0),
+        player.vertical_angle += vert_angle_increment;
+    glm::vec3 direction( cos(player.vertical_angle) * sin(player.horizontal_angle),
+                         sin(player.vertical_angle),
+                         cos(player.vertical_angle) * cos(player.horizontal_angle));
+    glm::vec3 right(sin(player.horizontal_angle - 3.14 / 2.0),
                     0,
-                    cos(player->horizontal_angle - 3.14 / 2.0));
+                    cos(player.horizontal_angle - 3.14 / 2.0));
     glm::vec3 up = glm::cross(right, direction);
 
-    player->direction = direction;
-    player->up = up;
-    player->right = right;
+    player.direction = direction;
+    player.up = up;
+    player.right = right;
 }
 
 glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
