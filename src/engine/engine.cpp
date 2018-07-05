@@ -94,7 +94,10 @@ void Engine::init()
     initImGui();
 
     glfwSetInputMode(this->main_window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetInputMode(this->main_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    this->MouseInputMode = GLFW_CURSOR_DISABLED;
+    glfwSetInputMode(this->main_window, GLFW_CURSOR, this->MouseInputMode);
+
     glfwSetCursorPos(this->main_window, this->hw_specs.scr_w / 2, this->hw_specs.scr_h / 2);
 
     glGenVertexArrays(1, &this->gl_variables.vertex_array_id);
@@ -204,42 +207,44 @@ void Engine::init()
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables.color_buffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-
-
 }
 
 void Engine::calcPlayerView()
 {
-    glm::vec3 player_pos = this->player.player_pos;
-    double xpos, ypos;
-    glfwGetCursorPos(this->main_window, &xpos, &ypos);
+    // Check mouse mode
+    if(this->MouseInputMode == GLFW_CURSOR_DISABLED)
+    {   
+        glm::vec3 player_pos = this->player.player_pos;
+        double xpos, ypos;
+        glfwGetCursorPos(this->main_window, &xpos, &ypos);
 
-    float scr_w = this->hw_specs.scr_w, scr_h = this->hw_specs.scr_h;
-    glfwSetCursorPos(this->main_window, scr_w / 2, scr_h / 2);
-    Engine::_Options& options = this->options;
-    Engine::_Player * player = &this->player;
+        float scr_w = this->hw_specs.scr_w, scr_h = this->hw_specs.scr_h;
+        glfwSetCursorPos(this->main_window, scr_w / 2, scr_h / 2);
 
-    auto delta_time = this->delta_time;
-    player->horizontal_angle += options.mouse_speed * delta_time * (scr_w / 2 - xpos);
-    auto vert_angle_increment = options.mouse_speed * delta_time * (scr_h / 2 - ypos);
-    if (player->vertical_angle + vert_angle_increment > 3.14)
-        player->vertical_angle = 3.14;
-    else if (player->vertical_angle + vert_angle_increment < -3.14)
-        player->vertical_angle = -3.14;
-    else
-        player->vertical_angle += vert_angle_increment;
-    glm::vec3 direction( cos(player->vertical_angle) * sin(player->horizontal_angle),
-                         sin(player->vertical_angle),
-                         cos(player->vertical_angle) * cos(player->horizontal_angle));
-    glm::vec3 right(sin(player->horizontal_angle - 3.14 / 2.0),
-                    0,
-                    cos(player->horizontal_angle - 3.14 / 2.0));
-    glm::vec3 up = glm::cross(right, direction);
+        Engine::_Options& options = this->options;
+        Engine::_Player * player = &this->player;
 
-    player->direction = direction;
-    player->up = up;
-    player->right = right;
+        auto delta_time = this->delta_time;
+        player->horizontal_angle += options.mouse_speed * delta_time * (scr_w / 2 - xpos);
+        auto vert_angle_increment = options.mouse_speed * delta_time * (scr_h / 2 - ypos);
+        if (player->vertical_angle + vert_angle_increment > 3.14)
+            player->vertical_angle = 3.14;
+        else if (player->vertical_angle + vert_angle_increment < -3.14)
+            player->vertical_angle = -3.14;
+        else
+            player->vertical_angle += vert_angle_increment;
+        glm::vec3 direction( cos(player->vertical_angle) * sin(player->horizontal_angle),
+                             sin(player->vertical_angle),
+                             cos(player->vertical_angle) * cos(player->horizontal_angle));
+        glm::vec3 right(sin(player->horizontal_angle - 3.14 / 2.0),
+                        0,
+                        cos(player->horizontal_angle - 3.14 / 2.0));
+        glm::vec3 up = glm::cross(right, direction);
+
+        player->direction = direction;
+        player->up = up;
+        player->right = right;
+    }
 }
 
 glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
@@ -283,6 +288,17 @@ void Engine::checkKeyPresses()
     {
         this->player.player_pos += this->player.right * float(this->delta_time) * this->options.player_speed;
     }
+    // Enable mouse cursor
+    if (glfwGetKey(this->main_window, GLFW_KEY_M) == GLFW_PRESS)
+    {
+        this->MouseInputMode = GLFW_CURSOR_NORMAL;
+        glfwSetInputMode(this->main_window, GLFW_CURSOR, this->MouseInputMode);
+    }
+    if (glfwGetKey(this->main_window, GLFW_KEY_N) == GLFW_PRESS)
+    {
+        this->MouseInputMode = GLFW_CURSOR_DISABLED;
+        glfwSetInputMode(this->main_window, GLFW_CURSOR, this->MouseInputMode);
+    }
 }
 
 void Engine::pollTime()
@@ -312,23 +328,6 @@ void Engine::initImGui()
 
     // Setup style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Load Fonts
-    // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them. 
-    // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple. 
-    // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-    // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-    // - Read 'misc/fonts/README.txt' for more instructions and details.
-    // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
-    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-    //IM_ASSERT(font != NULL);
-
 }
 
 void Engine::destroyImGui()

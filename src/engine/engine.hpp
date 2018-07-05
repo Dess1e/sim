@@ -67,5 +67,6 @@ public:
     } player;
 private:
     World world;
+    int MouseInputMode;
 };
 #endif
