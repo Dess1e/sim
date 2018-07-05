@@ -9,12 +9,16 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <src/engine/model.hpp>
-#include <src/common/resource_loader.hpp>
-#include <src/engine/world.hpp>
+#include <src/common/ResourceLoader.h>
+#include <src/engine/World.h>
 #include <map>
 #include <vector>
 #include <string>
+#include <src/common/Shader.h>
+
+#define DBG_LEVEL_WARNING 0x0
+#define DBG_LEVEL_ERROR 0x1
+#define DBG_LEVEL_FATAL 0x2
 
 class Engine
 {
@@ -26,6 +30,9 @@ public:
     void checkKeyPresses();
     void pollTime();
     void resetCamera();
+    void loadShader(std::string name);
+    void useShader(std::string name);
+    void debugPrint(unsigned char level, std::string message);
     glm::mat4 calculateMVP(float ratio, float nearz, float farz);
 
     GLFWwindow * main_window;
@@ -37,7 +44,8 @@ public:
         GLuint vertex_array_id;
         GLuint vertex_buffer;
         GLuint color_buffer;
-        GLuint shaders_id;
+        std::map<std::string, Shader> shaders;
+        Shader current_shader;
     } gl_variables;
     struct _Options
     {

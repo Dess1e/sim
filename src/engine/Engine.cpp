@@ -1,4 +1,4 @@
-#include <src/engine/engine.hpp>
+#include <src/engine/Engine.h>
 
 Engine::Engine()
 {
@@ -15,6 +15,53 @@ Engine::Engine()
     this->init();
 }
 
+void Engine::debugPrint(unsigned char level, std::string message)
+{
+    switch (level)
+    {
+    case DBG_LEVEL_WARNING:
+        printf("[Warning]: %s", message.c_str());
+        break;
+    case DBG_LEVEL_ERROR:
+        printf("[ERROR]: %s", message.c_str());
+        break;
+    default:
+    case DBG_LEVEL_FATAL:
+        printf("[FATAL]: %s", message.c_str());
+        this->quit(1);
+    }
+}
+
+void Engine::quit(unsigned int code)
+{
+    quick_exit(code);
+}
+
+void Engine::loadShader(std::string name)
+{
+    try
+    {
+        auto loaded_shader = Shader(name);
+        auto shader_map = this->gl_variables.shaders;
+        shader_map[name] = loaded_shader;
+    }
+    catch (ShaderCreateException& e)
+    {
+        auto error_message = e.what();
+        this->debugPrint(DBG_LEVEL_FATAL, error_message);
+    }
+}
+void Engine::useShader(std::string name)
+{
+    auto shader_map = this->gl_variables.shaders;
+    if (!shader_map.count(name))
+    {
+        this->debugPrint(DBG_LEVEL_ERROR, "No compiled/linked shader with name %s found");
+        return;
+    }
+    this->gl_variables.current_shader = shader_map[name];
+    this->gl_variables.current_shader.Use();
+}
 void Engine::mainloop()
 {
     GLuint MatrixID = glGetUniformLocation(this->gl_variables.shaders_id,
@@ -94,12 +141,9 @@ void Engine::init()
     glGenVertexArrays(1, &this->gl_variables.vertex_array_id);
     glBindVertexArray(this->gl_variables.vertex_array_id);
 
-    this->gl_variables.shaders_id = this->resource_loader.LoadShaders("shaders/vs.glsl",
-                                              "shaders/fs.glsl");
-
-    glUseProgram(this->gl_variables.shaders_id);
-
-
+    auto simple_shader = Shader("simple");
+    this->gl_variables.shaders["simple"] = simple_shader;
+    simple_shader.Use();
 
     static const GLfloat vertex_buffer[] = {
         -1.0f,-1.0f,-1.0f, // triangle 1 : begin
