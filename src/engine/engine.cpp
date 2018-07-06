@@ -3,13 +3,9 @@
 Engine::Engine()
 {
     //engine class constructor
+    this->MouseInputMode = GLFW_CURSOR_DISABLED;
     this->world = World();
-    this->options.player_speed = 3;
-    this->player.player_pos = glm::vec3(3, 0, 3);
-    this->player.horizontal_angle = 0;
-    this->player.vertical_angle = 0;
     this->options.mouse_speed = 0.3;
-    this->options.player_fov = 90.0;
     this->hw_specs.scr_h = 768;
     this->hw_specs.scr_w = 1366;
     this->init();
@@ -30,7 +26,8 @@ void Engine::mainloop()
     do
     {
         this->pollTime();
-        this->calcPlayerView();
+        GamePlayer.CalcPlayerView(this->MouseInputMode, this->delta_time, this->options.mouse_speed);
+        GamePlayer.CheckKeyPresses(this->delta_time);
         this->checkKeyPresses();
         mvp = calculateMVP(16/9, 0.1, 100.0);
 
@@ -40,12 +37,10 @@ void Engine::mainloop()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glfwPollEvents();
 
-        EngineGUI.ImGUILoop();
+        EngineGUI.Loop();
     }
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(this->main_window) == 0);
-
-    //destroyImGui();
     
     glDeleteBuffers(1, &this->gl_variables.vertex_buffer);
     glDeleteBuffers(1, &this->gl_variables.color_buffer);
@@ -86,14 +81,16 @@ void Engine::init()
         return;
     }
 
+    // Player init
+    GamePlayer.Init(this->main_window, this->hw_specs.scr_w, this->hw_specs.scr_h);
+
     // ImGui initialization
-    EngineGUI.ImGUIInit(main_window);
+    EngineGUI.Init(this->main_window);
 
-    glfwSetInputMode(this->main_window, GLFW_STICKY_KEYS, GL_TRUE);
-
+    // Init cursor 
     this->MouseInputMode = GLFW_CURSOR_DISABLED;
+    glfwSetInputMode(this->main_window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(this->main_window, GLFW_CURSOR, this->MouseInputMode);
-
     glfwSetCursorPos(this->main_window, this->hw_specs.scr_w / 2, this->hw_specs.scr_h / 2);
 
     glGenVertexArrays(1, &this->gl_variables.vertex_array_id);
@@ -205,50 +202,12 @@ void Engine::init()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 }
 
-void Engine::calcPlayerView()
-{
-    // Check mouse mode
-    if(this->MouseInputMode == GLFW_CURSOR_DISABLED)
-    {   
-        glm::vec3 player_pos = this->player.player_pos;
-        double xpos, ypos;
-        glfwGetCursorPos(this->main_window, &xpos, &ypos);
-
-        float scr_w = this->hw_specs.scr_w, scr_h = this->hw_specs.scr_h;
-        glfwSetCursorPos(this->main_window, scr_w / 2, scr_h / 2);
-
-        Engine::_Options& options = this->options;
-        Engine::_Player * player = &this->player;
-
-        auto delta_time = this->delta_time;
-        player->horizontal_angle += options.mouse_speed * delta_time * (scr_w / 2 - xpos);
-        auto vert_angle_increment = options.mouse_speed * delta_time * (scr_h / 2 - ypos);
-        if (player->vertical_angle + vert_angle_increment > 3.14)
-            player->vertical_angle = 3.14;
-        else if (player->vertical_angle + vert_angle_increment < -3.14)
-            player->vertical_angle = -3.14;
-        else
-            player->vertical_angle += vert_angle_increment;
-        glm::vec3 direction( cos(player->vertical_angle) * sin(player->horizontal_angle),
-                             sin(player->vertical_angle),
-                             cos(player->vertical_angle) * cos(player->horizontal_angle));
-        glm::vec3 right(sin(player->horizontal_angle - 3.14 / 2.0),
-                        0,
-                        cos(player->horizontal_angle - 3.14 / 2.0));
-        glm::vec3 up = glm::cross(right, direction);
-
-        player->direction = direction;
-        player->up = up;
-        player->right = right;
-    }
-}
-
 glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
 {
-    glm::mat4 proj = glm::perspective(glm::radians(this->options.player_fov), ratio, nearz, farz);
-    glm::mat4 view = glm::lookAt(this->player.player_pos,
-                                 this->player.direction + this->player.player_pos,
-                                 this->player.up);
+    glm::mat4 proj = glm::perspective(glm::radians(this->GamePlayer.player_fov), ratio, nearz, farz);
+    glm::mat4 view = glm::lookAt(this->GamePlayer.player_pos,
+                                 this->GamePlayer.direction + this->GamePlayer.player_pos,
+                                 this->GamePlayer.up);
     glm::mat4 model = glm::mat4(1);
     glm::mat4 mvp = proj * view * model;
     return mvp;
@@ -256,35 +215,7 @@ glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
 
 void Engine::checkKeyPresses()
 {
-    if (glfwGetKey(this->main_window, GLFW_KEY_C) == GLFW_PRESS)
-    {
-        this->resetCamera();
-    }
-    if (glfwGetKey(this->main_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        this->options.player_speed = 9;
-    }
-    else
-    {
-        this->options.player_speed = 3;
-    }
-    if (glfwGetKey(this->main_window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        this->player.player_pos += this->player.direction * float(this->delta_time) * this->options.player_speed;
-    }
-    if (glfwGetKey(this->main_window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        this->player.player_pos -= this->player.right * float(this->delta_time) * this->options.player_speed;
-    }
-    if (glfwGetKey(this->main_window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        this->player.player_pos -= this->player.direction * float(this->delta_time) * this->options.player_speed;
-    }
-    if (glfwGetKey(this->main_window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        this->player.player_pos += this->player.right * float(this->delta_time) * this->options.player_speed;
-    }
-    // Enable mouse cursor
+    // Enable/Disable mouse cursor
     if (glfwGetKey(this->main_window, GLFW_KEY_M) == GLFW_PRESS)
     {
         this->MouseInputMode = GLFW_CURSOR_NORMAL;
@@ -302,10 +233,4 @@ void Engine::pollTime()
     auto curr_time = glfwGetTime();
     this->delta_time = curr_time - this->last_time;
     this->last_time = curr_time;
-}
-
-void Engine::resetCamera()
-{
-    this->player.horizontal_angle = 3.3;
-    this->player.vertical_angle = 0;
 }

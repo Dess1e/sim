@@ -11,8 +11,8 @@ public:
     GUI();
     ~GUI();
 
-    void ImGUIInit(GLFWwindow* InWindow);
-    void ImGUILoop();
+    void Init(GLFWwindow* InWindow);
+    void Loop();
 
 private:
     GLFWwindow* Window;

@@ -12,7 +12,7 @@ GUI::~GUI()
     ImGui::DestroyContext();
 }
 
-void GUI::ImGUIInit(GLFWwindow* InWindow)
+void GUI::Init(GLFWwindow* InWindow)
 {
     Window = InWindow;
     // Setup Dear ImGui binding
@@ -29,7 +29,7 @@ void GUI::ImGUIInit(GLFWwindow* InWindow)
     ImGui::StyleColorsDark();
 }
 
-void GUI::ImGUILoop()
+void GUI::Loop()
 {
     // Start the ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
