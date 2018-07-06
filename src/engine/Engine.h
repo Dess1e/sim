@@ -15,6 +15,7 @@
 #include <vector>
 #include <string>
 #include <src/common/Shader.h>
+#include "Model.h"
 
 #define DBG_LEVEL_WARNING 0x0
 #define DBG_LEVEL_ERROR 0x1
@@ -42,9 +43,6 @@ public:
     double delta_time;
     struct GLVariables
     {
-        GLuint vertex_array_id;
-        GLuint vertex_buffer;
-        GLuint color_buffer;
         std::map<std::string, Shader *> shaders;
         Shader * current_shader;
     } * gl_variables = new GLVariables;

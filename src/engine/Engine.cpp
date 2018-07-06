@@ -34,14 +34,11 @@ void Engine::debugPrint(unsigned char level, std::string message)
 
 void Engine::quit()
 {
-    glDeleteBuffers(1, &this->gl_variables->vertex_buffer);
-    glDeleteBuffers(1, &this->gl_variables->color_buffer);
     for (const auto& kv : this->gl_variables->shaders)
     {
         Shader * curr = kv.second;
         glDeleteProgram(curr->id);
     }
-    glDeleteVertexArrays(1, &this->gl_variables->vertex_array_id);
     glfwTerminate();
 }
 
@@ -73,24 +70,16 @@ void Engine::mainloop()
     GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
-
-    GLuint texture = this->resource_loader.LoadTextureBMP("textures/texture.bmp");
-    GLuint texture_id = this->gl_variables->current_shader->getUniform("texture_sampler");
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    auto x = Model("resources/nanosuit.obj");
     do
     {
         this->pollTime();
         this->calcPlayerView();
         this->checkKeyPresses();
         mvp = calculateMVP(16/9, 0.1, 100.0);
-
-
-        glUniform1i(texture_id, 0);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        x.draw(this->gl_variables->current_shader);
         glfwSwapBuffers(this->main_window);
         glfwPollEvents();
     }
@@ -134,117 +123,14 @@ void Engine::init()
     glfwSetInputMode(this->main_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPos(this->main_window, this->hw_specs.scr_w / 2, this->hw_specs.scr_h / 2);
 
-
     glClearColor(0, 0, 0, 0);
-
-    glGenVertexArrays(1, &this->gl_variables->vertex_array_id);
-    glBindVertexArray(this->gl_variables->vertex_array_id);
 
     this->loadShader("simple");
     this->useShader("simple");
 
-    static const GLfloat vertex_buffer[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
-    };
-    static const GLfloat uv_buffer[] = {
-        0.000059f, 1.0f-0.000004f,
-        0.000103f, 1.0f-0.336048f,
-        0.335973f, 1.0f-0.335903f,
-        1.000023f, 1.0f-0.000013f,
-        0.667979f, 1.0f-0.335851f,
-        0.999958f, 1.0f-0.336064f,
-        0.667979f, 1.0f-0.335851f,
-        0.336024f, 1.0f-0.671877f,
-        0.667969f, 1.0f-0.671889f,
-        1.000023f, 1.0f-0.000013f,
-        0.668104f, 1.0f-0.000013f,
-        0.667979f, 1.0f-0.335851f,
-        0.000059f, 1.0f-0.000004f,
-        0.335973f, 1.0f-0.335903f,
-        0.336098f, 1.0f-0.000071f,
-        0.667979f, 1.0f-0.335851f,
-        0.335973f, 1.0f-0.335903f,
-        0.336024f, 1.0f-0.671877f,
-        1.000004f, 1.0f-0.671847f,
-        0.999958f, 1.0f-0.336064f,
-        0.667979f, 1.0f-0.335851f,
-        0.668104f, 1.0f-0.000013f,
-        0.335973f, 1.0f-0.335903f,
-        0.667979f, 1.0f-0.335851f,
-        0.335973f, 1.0f-0.335903f,
-        0.668104f, 1.0f-0.000013f,
-        0.336098f, 1.0f-0.000071f,
-        0.000103f, 1.0f-0.336048f,
-        0.000004f, 1.0f-0.671870f,
-        0.336024f, 1.0f-0.671877f,
-        0.000103f, 1.0f-0.336048f,
-        0.336024f, 1.0f-0.671877f,
-        0.335973f, 1.0f-0.335903f,
-        0.667969f, 1.0f-0.671889f,
-        1.000004f, 1.0f-0.671847f,
-        0.667979f, 1.0f-0.335851f
-    };
-
-    glGenBuffers(1, &this->gl_variables->vertex_buffer);
-    glGenBuffers(1, &this->gl_variables->color_buffer);
-
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer)/*size of vbuf*/,
-                 vertex_buffer, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->color_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer)/*size of cbuf*/,
-                 uv_buffer, GL_STATIC_DRAW);
-
-    //zbuffering please
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glDepthFunc(GL_LESS);
-
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->vertex_buffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, this->gl_variables->color_buffer);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-
-
 }
 
 void Engine::calcPlayerView()
@@ -286,7 +172,9 @@ glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
     glm::mat4 view = glm::lookAt(this->player.player_pos,
                                  this->player.direction + this->player.player_pos,
                                  this->player.up);
-    glm::mat4 model = glm::mat4(1);
+    glm::mat4 model;
+    //model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.5f);
+    //model = glm::rotate(model, 45.0f, glm::vec3(0, 0, 1));
     glm::mat4 mvp = proj * view * model;
     return mvp;
 }
@@ -320,6 +208,10 @@ void Engine::checkKeyPresses()
     if (glfwGetKey(this->main_window, GLFW_KEY_D) == GLFW_PRESS)
     {
         this->player.player_pos += this->player.right * float(this->delta_time) * this->options.player_speed;
+    }
+    if (glfwGetKey(this->main_window, GLFW_KEY_R) == GLFW_PRESS)
+    {
+        glfwSetInputMode(this->main_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 }
 
