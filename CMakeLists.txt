@@ -21,7 +21,7 @@ endif()
 # Compile external dependencies 
 add_subdirectory (lib)
 include_directories(
-        lib/AntTweakBar-1.16/include/
+        lib/imgui/include/
         lib/glfw-3.1.2/include/
         lib/glm-0.9.7.1/
         lib/glew-1.13.0/include/
@@ -33,7 +33,8 @@ include_directories(
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
-	GLEW_1130
+    GLEW_1130
+    ImGui
 )
 
 add_definitions(
