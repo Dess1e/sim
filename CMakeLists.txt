@@ -1,11 +1,11 @@
 cmake_minimum_required (VERSION 3.0)
 project (sim)
 
-file(GLOB SHADERS shaders/*.glsl)
+file(GLOB_RECURSE SHADERS shaders/*.glsl)
 file(GLOB_RECURSE SRC "src/*.cpp" "src/*.hpp" "src/*.h")
 add_executable( ${PROJECT_NAME}
                 ${SHADERS}
-                ${SRC} )
+                ${SRC})
 find_package(OpenGL REQUIRED)
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
@@ -20,6 +20,7 @@ endif()
 
 # Compile external dependencies 
 add_subdirectory (lib)
+
 include_directories(
         lib/AntTweakBar-1.16/include/
         lib/glfw-3.1.2/include/
@@ -34,6 +35,7 @@ set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
 	GLEW_1130
+    assimp
 )
 
 add_definitions(
@@ -49,6 +51,8 @@ target_link_libraries(sim
 )
 
 add_custom_command(TARGET sim PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:sim>/shaders)
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders/ $<TARGET_FILE_DIR:sim>/shaders)
 add_custom_command(TARGET sim PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/textures $<TARGET_FILE_DIR:sim>/textures)
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/textures/ $<TARGET_FILE_DIR:sim>/textures)
+add_custom_command(TARGET sim PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:sim>/resources)

@@ -1,10 +1,9 @@
 #version 330 core
 
-// Ouput data
-in vec2 UV;
-out vec3 color;
-uniform sampler2D texture_sampler;
+out vec4 frag_color;
+in vec2 out_tex_coords;
+uniform sampler2D texture_diffuse1;
 void main()
 {
-    color = texture2D(texture_sampler, UV).rgb;
+    frag_color = texture(texture_diffuse1, out_tex_coords);
 }
