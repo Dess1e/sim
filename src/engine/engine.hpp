@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
+#include <src/engine/GUI.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,10 +15,6 @@
 #include <map>
 #include <vector>
 #include <string>
-
-#include "lib/imgui/imgui.h"
-#include "lib/imgui/examples/imgui_impl_glfw.h"
-#include "lib/imgui/examples/imgui_impl_opengl3.h"
 
 class Engine
 {
@@ -32,12 +28,9 @@ public:
     void resetCamera();
     glm::mat4 calculateMVP(float ratio, float nearz, float farz);
 
-    void loopImGui(bool show_demo_window, bool show_another_window, ImVec4& clear_color, GLFWwindow* window);
-    void initImGui();
-    void destroyImGui();
-
-    GLFWwindow * main_window;
+    GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();
+    GUI EngineGUI = GUI();
     double last_time;
     double delta_time;
     struct _GLVariables
@@ -65,6 +58,7 @@ public:
         float vertical_angle;
         glm::vec3 direction, up, right;
     } player;
+    
 private:
     World world;
     int MouseInputMode;
