@@ -21,7 +21,7 @@ endif()
 # Compile external dependencies 
 add_subdirectory (lib)
 include_directories(
-        lib/imgui/include/
+        lib/imgui/
         lib/glfw-3.1.2/include/
         lib/glm-0.9.7.1/
         lib/glew-1.13.0/include/
