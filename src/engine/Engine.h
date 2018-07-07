@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <src/common/ResourceLoader.h>
 #include <src/engine/World.h>
+#include "src/engine/Landscape.h"
 #include <map>
 #include <vector>
 #include <string>

@@ -71,6 +71,10 @@ void Engine::mainloop()
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
     auto x = Model("resources/nanosuit.obj");
+
+    Landscape TestLandscape = Landscape();
+    Mesh LandscapeMesh = TestLandscape.CreateBasicShape();
+
     do
     {
         this->pollTime();
@@ -79,7 +83,10 @@ void Engine::mainloop()
         mvp = calculateMVP(16/9, 0.1, 100.0);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         x.draw(this->gl_variables->current_shader);
+        LandscapeMesh.draw(this->gl_variables->current_shader);
+
         glfwSwapBuffers(this->main_window);
         glfwPollEvents();
     }
