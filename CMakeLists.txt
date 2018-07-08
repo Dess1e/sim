@@ -22,7 +22,7 @@ endif()
 add_subdirectory (lib)
 
 include_directories(
-        lib/AntTweakBar-1.16/include/
+        lib/imgui/
         lib/glfw-3.1.2/include/
         lib/glm-0.9.7.1/
         lib/glew-1.13.0/include/
@@ -36,6 +36,7 @@ set(ALL_LIBS
 	glfw
 	GLEW_1130
     assimp
+    ImGui
 )
 
 add_definitions(

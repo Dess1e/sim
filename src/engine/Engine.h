@@ -4,8 +4,9 @@
 #include <stdlib.h>
 
 #include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
+#include <src/engine/GUI.hpp>
+#include <src/engine/Player.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -27,18 +28,17 @@ public:
     Engine();
     void mainloop();
     void init();
-    void calcPlayerView();
-    void checkKeyPresses();
     void pollTime();
-    void resetCamera();
     void loadShader(std::string name);
     void useShader(std::string name);
     void debugPrint(unsigned char level, std::string message);
     void quit();
     glm::mat4 calculateMVP(float ratio, float nearz, float farz);
 
-    GLFWwindow * main_window;
+    GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();
+    GUI EngineGUI = GUI();
+    Player GamePlayer = Player();
     double last_time;
     double delta_time;
     struct GLVariables
@@ -48,24 +48,17 @@ public:
     } * gl_variables = new GLVariables;
     struct Options
     {
-        float player_speed;
         float mouse_speed;
-        float player_fov;
     } options;
     struct HWSpecs
     {
         float scr_h;
         float scr_w;
     } hw_specs;
-    struct Player
-    {
-        glm::vec3 player_pos;
-        float horizontal_angle;
-        float vertical_angle;
-        glm::vec3 direction, up, right;
-    } player;
+    
 private:
     World world;
+    int MouseInputMode;
 };
 
 
