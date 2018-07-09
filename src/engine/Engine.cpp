@@ -74,9 +74,10 @@ void Engine::mainloop()
         mvp = calculateMVP(16/9, 0.1, 100.0);
 
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
-        x.draw(this->gl_variables->current_shader);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        x.draw(this->gl_variables->current_shader);
         glfwPollEvents();
+
         EngineGUI.Loop();
     }
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
