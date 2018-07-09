@@ -13,11 +13,11 @@ add_definitions(
 
 ### GLFW ###
 
-add_subdirectory (glfw-3.1.2)
+add_subdirectory (glfw)
 
 include_directories(
-	glfw-3.1.2/include/GLFW/
-	glew-1.13.0/include/
+	glfw/include/GLFW/
+	glew/include/
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -38,7 +38,7 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 ### GLEW ###
 
 set(GLEW_SOURCE
-	glew-1.13.0/src/glew.c
+	glew/src/glew.c
 )
 
 set(GLEW_HEADERS
@@ -75,7 +75,7 @@ imgui/stb_truetype.h
 imgui/examples/imgui_impl_glfw.h
 imgui/examples/imgui_impl_opengl3.h)
 
-add_library(ImGui ${IMGUI_SOURCES} ${IMGUI_HEADERS})
+add_library(ImGUI ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
 ### ASSIMP ###
 # AssImp already has a CMakeLists.txt so let's use these
@@ -84,10 +84,10 @@ add_library(ImGui ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 include(CheckIncludeFile)
 include(CheckTypeSize)
 include(CheckFunctionExists)
-add_subdirectory( assimp-3.0.1270/contrib/zlib )
+add_subdirectory( assimp/contrib/zlib )
 
 # Compile without Boost
-include_directories( assimp-3.0.1270/code/BoostWorkaround )
+include_directories( assimp/code/BoostWorkaround )
 add_definitions( -DASSIMP_BUILD_BOOST_WORKAROUND )
 
 # Compile AssImp
@@ -96,7 +96,7 @@ set(LIBASSIMP_COMPONENT libassimp3.0-r1270-OGLtuts)
 set(ZLIB_LIBRARIES zlib)
 set(BUILD_STATIC_LIB ON)
 #set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/zlib)
-add_subdirectory( assimp-3.0.1270/code )
+add_subdirectory( assimp/code )
 
 
 ### BULLET ###
@@ -104,12 +104,12 @@ add_subdirectory( assimp-3.0.1270/code )
 
 set(BULLET_VERSION 2.81)
 include_directories(
-	bullet-2.81-rev2613/src
+	bullet/src
 )
-add_subdirectory( bullet-2.81-rev2613/src/BulletSoftBody )
-add_subdirectory( bullet-2.81-rev2613/src/BulletCollision )
-add_subdirectory( bullet-2.81-rev2613/src/BulletDynamics )
-add_subdirectory( bullet-2.81-rev2613/src/LinearMath )
+add_subdirectory( bullet/src/BulletSoftBody )
+add_subdirectory( bullet/src/BulletCollision )
+add_subdirectory( bullet/src/BulletDynamics )
+add_subdirectory( bullet/src/LinearMath )
 
 
 # stb

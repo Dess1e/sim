@@ -2,10 +2,11 @@ cmake_minimum_required (VERSION 3.0)
 project (sim)
 
 file(GLOB_RECURSE SHADERS shaders/*.glsl)
-file(GLOB_RECURSE SRC "src/*.cpp" "src/*.hpp" "src/*.h")
+file(GLOB_RECURSE SOURCES "Sources/*.cpp" "Sources/*.hpp" "Sources/*.h")
+
 add_executable( ${PROJECT_NAME}
                 ${SHADERS}
-                ${SRC})
+                ${SOURCES})
 find_package(OpenGL REQUIRED)
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
@@ -19,15 +20,15 @@ if( CMAKE_BINARY_DIR MATCHES " " )
 endif()
 
 # Compile external dependencies 
-add_subdirectory (lib)
+add_subdirectory (ThirdParty)
 
 include_directories(
-        lib/imgui/
-        lib/glfw-3.1.2/include/
-        lib/glm-0.9.7.1/
-        lib/glew-1.13.0/include/
-        lib/assimp-3.0.1270/include/
-        lib/bullet-2.81-rev2613/src/
+        ThirdParty/imgui/
+        ThirdParty/glfw/include/
+        ThirdParty/glm/
+        ThirdParty/glew0/include/
+        ThirdParty/assimp/include/
+        ThirdParty/bullet/src/
         .
 )
 
@@ -36,7 +37,7 @@ set(ALL_LIBS
 	glfw
 	GLEW_1130
     assimp
-    ImGui
+    ImGUI
 )
 
 add_definitions(
@@ -52,8 +53,8 @@ target_link_libraries(sim
 )
 
 add_custom_command(TARGET sim PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders/ $<TARGET_FILE_DIR:sim>/shaders)
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Shaders/ $<TARGET_FILE_DIR:sim>/Shaders)
 add_custom_command(TARGET sim PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/textures/ $<TARGET_FILE_DIR:sim>/textures)
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Textures/ $<TARGET_FILE_DIR:sim>/Textures)
 add_custom_command(TARGET sim PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:sim>/resources)
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Resources/ $<TARGET_FILE_DIR:sim>/Resources)

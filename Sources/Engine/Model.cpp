@@ -1,6 +1,6 @@
-#include "Model.h"
+#include "Sources/Engine/Model.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include <lib/stb/stb_image.h>
+#include <ThirdParty/stb/stb_image.h>
 
 Model::Model(const std::string &path)
 {

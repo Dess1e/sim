@@ -1,4 +1,4 @@
-#include "src/engine/GUI.hpp"
+#include "Sources/Engine/GUI.h"
 
 GUI::GUI()
 {

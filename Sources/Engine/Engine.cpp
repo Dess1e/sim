@@ -1,4 +1,4 @@
-#include <src/engine/Engine.h>
+#include <Sources/Engine/Engine.h>
 
 Engine::Engine()
 {
@@ -66,7 +66,7 @@ void Engine::mainloop()
     GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
-    auto x = Model("resources/nanosuit.obj");
+    auto x = Model("Resources/nanosuit.obj");
     do
     {
         this->pollTime();

@@ -5,17 +5,17 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <src/engine/GUI.hpp>
-#include <src/engine/Player.hpp>
+#include <Sources/Engine/GUI.h>
+#include <Sources/Engine/Player.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <src/common/ResourceLoader.h>
-#include <src/engine/World.h>
+#include <Sources/Common/ResourceLoader.h>
+#include <Sources/Engine/World.h>
 #include <map>
 #include <vector>
 #include <string>
-#include <src/common/Shader.h>
+#include <Sources/Common/Shader.h>
 #include "Model.h"
 
 #define DBG_LEVEL_WARNING 0x0

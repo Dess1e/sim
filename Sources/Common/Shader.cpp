@@ -12,7 +12,7 @@ Shader::Shader(std::string _shader_name)
 
     // Read the Vertex Shader code from the file
     std::string VertexShaderCode;
-    std::ifstream VertexShaderStream("shaders/" + _shader_name + "/vs.glsl", std::ios::in);
+    std::ifstream VertexShaderStream("Shaders/" + _shader_name + "/vs.glsl", std::ios::in);
     if(VertexShaderStream.is_open()){
         std::stringstream sstr;
         sstr << VertexShaderStream.rdbuf();
@@ -24,7 +24,7 @@ Shader::Shader(std::string _shader_name)
 
     // Read the Fragment Shader code from the file
     std::string FragmentShaderCode;
-    std::ifstream FragmentShaderStream("shaders/" + _shader_name + "/fs.glsl", std::ios::in);
+    std::ifstream FragmentShaderStream("Shaders/" + _shader_name + "/fs.glsl", std::ios::in);
     if(FragmentShaderStream.is_open()){
         std::stringstream sstr;
         sstr << FragmentShaderStream.rdbuf();

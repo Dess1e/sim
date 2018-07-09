@@ -1,9 +1,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <string>
-#include <src/common/Shader.h>
+#include <Sources/Common/Shader.h>
 #include <vector>
-#include <src/engine/Mesh.h>
+#include <Sources/Engine/Mesh.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
