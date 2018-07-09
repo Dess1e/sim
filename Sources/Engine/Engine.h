@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <Sources/Engine/GUI.h>
 #include <Sources/Engine/Player.h>
+#include <Sources/Engine/Model.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +17,6 @@
 #include <vector>
 #include <string>
 #include <Sources/Common/Shader.h>
-#include "Model.h"
 
 #define DBG_LEVEL_WARNING 0x0
 #define DBG_LEVEL_ERROR 0x1

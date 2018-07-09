@@ -24,42 +24,42 @@ void GUI::Init(GLFWwindow* InWindow)
     ImGui_ImplGlfw_InitForOpenGL(Window, true);
     ImGui_ImplOpenGL3_Init();
     // Setup style
-    ImGui::StyleColorsDark();
+    ImGui::StyleColorsLight();
 }
 
 void GUI::Loop()
 {
+    static ImVec4 ClearColor = ImVec4(0.0f, 0.138f, 0.588f, 1.00f);
+    bool ShowMainWindow = true;
+
     // Start the ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    // 1. Show a simple window.
-    // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
+
+    ImGui::SetNextWindowBgAlpha(0.7f);
+    // 1. Show a simple window.        
+    if (ImGui::Begin("Main Window", &ShowMainWindow))
     {
         static float f = 0.0f;
         static int counter = 0;
-        ImGui::Text("USE 'M' BUTTON TO ENABLE CURSOR");         // Display some text (you can use a format string too)
-        ImGui::Text("USE 'N' BUTTON TO DISABLE CURSOR");        // Display some text (you can use a format string too)
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+        ImGui::SetWindowPos(ImVec2(10.0, 30.0));
+        ImGui::SetWindowSize(ImVec2(350.0, 150.0));
+        ImGui::Text("Use 'M' to enable mouse cursor"); 
+        ImGui::Text("Use 'N' to disable mouse cursor");
+
+        ImGui::SliderFloat("float", &f, 0.0f, 0.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
         ImGui::ColorEdit3("clear color", (float*)&ClearColor); // Edit 3 floats representing a color
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our windows open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
+
+        //ImGui::SameLine();
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    }
-    // 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name your windows.
-    if (show_another_window)
-    {
-        ImGui::Begin("Another Window", &show_another_window);
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
         ImGui::End();
     }
+
+    // 2. Show bar menu
+    ShowMainMenuBar();
+
     // 3. Show the ImGui demo window. Most of the sample code is in ImGui::ShowDemoWindow(). Read its code to learn more about Dear ImGui!
     if (show_demo_window)
     {
@@ -78,6 +78,19 @@ void GUI::Loop()
     	
     glfwMakeContextCurrent(Window);
     glfwSwapBuffers(Window);
+}
+
+void GUI::ShowMainMenuBar()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu("Functions"))
+        {
+            if (ImGui::MenuItem("Show Demo window", "CTRL+X")) {show_demo_window = true;}
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
 }
 
 void GUI::CheckKeyPresses()
