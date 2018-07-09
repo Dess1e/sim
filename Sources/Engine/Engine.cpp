@@ -3,6 +3,7 @@
 Engine::Engine()
 {
     this->world = World();
+    this->GamePlayer = Player();
     this->options.mouse_speed = 0.3;
     this->hw_specs.scr_h = 768;
     this->hw_specs.scr_w = 1366;
@@ -67,6 +68,7 @@ void Engine::mainloop()
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
     auto x = Model("Resources/nanosuit.obj");
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     do
     {
         this->pollTime();
@@ -85,7 +87,6 @@ void Engine::mainloop()
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(this->main_window) == 0);
     this->quit();
-    return;
 }
 
 void Engine::init()
@@ -130,8 +131,6 @@ void Engine::init()
     glfwSetInputMode(this->main_window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(this->main_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPos(this->main_window, this->hw_specs.scr_w / 2, this->hw_specs.scr_h / 2);
-
-    glClearColor(0, 0, 0, 0);
 
     this->loadShader("simple");
     this->useShader("simple");

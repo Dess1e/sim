@@ -38,7 +38,7 @@ public:
     GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();
     GUI EngineGUI = GUI();
-    Player GamePlayer = Player();
+    Player GamePlayer;
     double last_time;
     double delta_time;
     struct GLVariables

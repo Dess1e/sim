@@ -21,10 +21,8 @@ void GUI::Init(GLFWwindow* InWindow)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
-
     ImGui_ImplGlfw_InitForOpenGL(Window, true);
     ImGui_ImplOpenGL3_Init();
-
     // Setup style
     ImGui::StyleColorsDark();
 }
