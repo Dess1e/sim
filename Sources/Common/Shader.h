@@ -13,9 +13,15 @@ class Shader
 public:
     Shader(std::string path);
     void use();
+    void Load(std::string ShaderName, std::string Filename, GLuint& ShaderID);
     GLuint getUniform(std::string uniform_name);
+
     unsigned int id;
     std::string shader_name;
+
+private:
+    GLint Result = GL_FALSE;
+    int InfoLogLength;
 };
 
 class ShaderCreateException : public std::exception

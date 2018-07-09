@@ -65,10 +65,12 @@ void Engine::useShader(std::string name)
 void Engine::mainloop()
 {
     GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
+    GLuint TimeID = this->gl_variables->current_shader->getUniform("time");
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
     auto x = Model("Resources/nanosuit.obj");
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
     do
     {
         this->pollTime();
@@ -76,6 +78,7 @@ void Engine::mainloop()
         GamePlayer.CheckKeyPresses(this->delta_time);
         mvp = calculateMVP(16/9, 0.1, 100.0);
 
+        glUniform1f(TimeID, (0.0));
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         x.draw(this->gl_variables->current_shader);
