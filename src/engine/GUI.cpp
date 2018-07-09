@@ -81,3 +81,17 @@ void GUI::Loop()
     glfwMakeContextCurrent(Window);
     glfwSwapBuffers(Window);
 }
+
+void GUI::CheckKeyPresses()
+{
+    if (glfwGetKey(Window, GLFW_KEY_M) == GLFW_PRESS)
+    {
+        this->MouseInputMode  = GLFW_CURSOR_NORMAL;
+        glfwSetInputMode(this->Window, GLFW_CURSOR, this->MouseInputMode);
+    }
+    if (glfwGetKey(Window, GLFW_KEY_N) == GLFW_PRESS)
+    {
+        this->MouseInputMode  = GLFW_CURSOR_DISABLED;
+        glfwSetInputMode(this->Window, GLFW_CURSOR, this->MouseInputMode);
+    }
+}

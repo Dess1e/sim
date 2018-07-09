@@ -58,9 +58,5 @@ public:
     
 private:
     World world;
-    int MouseInputMode;
 };
-
-
-
 #endif

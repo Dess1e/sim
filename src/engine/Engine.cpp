@@ -2,7 +2,6 @@
 
 Engine::Engine()
 {
-    this->MouseInputMode = GLFW_CURSOR_DISABLED;
     this->world = World();
     this->options.mouse_speed = 0.3;
     this->hw_specs.scr_h = 768;
@@ -49,6 +48,7 @@ void Engine::loadShader(std::string name)
         this->debugPrint(DBG_LEVEL_FATAL, error_message);
     }
 }
+
 void Engine::useShader(std::string name)
 {
     auto shader_map = this->gl_variables->shaders;
@@ -60,6 +60,7 @@ void Engine::useShader(std::string name)
     this->gl_variables->current_shader = shader_map[name];
     this->gl_variables->current_shader->use();
 }
+
 void Engine::mainloop()
 {
     GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
@@ -69,7 +70,7 @@ void Engine::mainloop()
     do
     {
         this->pollTime();
-        GamePlayer.CalcPlayerView(this->MouseInputMode, this->delta_time, this->options.mouse_speed);
+        GamePlayer.CalcPlayerView(this->EngineGUI.MouseInputMode, this->delta_time, this->options.mouse_speed);
         GamePlayer.CheckKeyPresses(this->delta_time);
         mvp = calculateMVP(16/9, 0.1, 100.0);
 
@@ -79,6 +80,7 @@ void Engine::mainloop()
         glfwPollEvents();
 
         EngineGUI.Loop();
+        EngineGUI.CheckKeyPresses();
     }
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(this->main_window) == 0);
@@ -123,7 +125,7 @@ void Engine::init()
     EngineGUI.Init(this->main_window);
 
     // Init cursor
-    this->MouseInputMode = GLFW_CURSOR_DISABLED;
+    this->EngineGUI.MouseInputMode  = GLFW_CURSOR_DISABLED;
 
     glfwSetInputMode(this->main_window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(this->main_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -149,8 +151,6 @@ glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
     glm::mat4 mvp = proj * view * model;
     return mvp;
 }
-
-
 
 void Engine::pollTime()
 {

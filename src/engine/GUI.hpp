@@ -13,7 +13,9 @@ public:
 
     void Init(GLFWwindow* InWindow);
     void Loop();
+    void CheckKeyPresses();
 
+    int MouseInputMode;
 private:
     GLFWwindow* Window;
     bool show_demo_window = true;
