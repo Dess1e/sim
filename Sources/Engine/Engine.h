@@ -27,7 +27,7 @@ class Engine
 public:
     Engine();
     void mainloop();
-    void init();
+    void initgl();
     void pollTime();
     void loadShader(std::string name);
     void useShader(std::string name);
@@ -37,8 +37,8 @@ public:
 
     GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();
-    GUI EngineGUI = GUI();
-    Player GamePlayer;
+    GUI * EngineGUI;
+    Player * GamePlayer;
     double last_time;
     double delta_time;
     struct GLVariables
