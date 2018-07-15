@@ -4,6 +4,8 @@ GUI::GUI(GLFWwindow * inWindow)
 {
     this->InitImGUI(inWindow);
     this->Console = new ConsoleGUI();
+
+    this->show_console = false;
 }
 
 GUI::~GUI()
@@ -39,7 +41,8 @@ void GUI::Draw()
     ImGui::SetNextWindowBgAlpha(0.7f);
     ImGui::SetNextWindowSize(ImVec2(800, 400));
 
-    this->Console->Draw("Console");
+    if (this->show_console)
+        this->Console->Draw();
 
     ImGui::Render();
     
@@ -52,23 +55,12 @@ void GUI::Draw()
     glfwSwapBuffers(Window);
 }
 
-void GUI::CheckKeyPresses()
-{
-    if (glfwGetKey(Window, GLFW_KEY_M) == GLFW_PRESS)
-    {
-        this->MouseInputMode  = GLFW_CURSOR_NORMAL;
-        glfwSetInputMode(this->Window, GLFW_CURSOR, this->MouseInputMode);
-    }
-    if (glfwGetKey(Window, GLFW_KEY_N) == GLFW_PRESS)
-    {
-        this->MouseInputMode  = GLFW_CURSOR_DISABLED;
-        glfwSetInputMode(this->Window, GLFW_CURSOR, this->MouseInputMode);
-    }
-}
-
 ConsoleGUI::ConsoleGUI()
 {
     this->is_enabled = false;
+    this->input_line_buffer = new char[CONSOLE_INPUT_LINE_BUFFER_SIZE];
+    this->input_line_buffer[0] = '\0'; //so there will be '' string at start
+    this->console_label = (char *)CONSOLE_DEFAULT_LABEL;
 }
 
 void ConsoleGUI::Clear()
@@ -85,12 +77,20 @@ void ConsoleGUI::AddLog(const char *fmt, ...)
     this->ScrollToBottom = true;
 }
 
-void ConsoleGUI::Draw(const char *title, bool *p_opened)
+void ConsoleGUI::Draw(bool *p_opened)
 {
-    ImGui::Begin(title, p_opened);
+    ImGui::Begin(CONSOLE_DEFAULT_LABEL, p_opened);
     ImGui::TextUnformatted(Buf.begin());
     if (ScrollToBottom)
         ImGui::SetScrollHere(1.0f);
+    ImGui::SetKeyboardFocusHere();
+    if (ImGui::InputText("", this->input_line_buffer, CONSOLE_INPUT_LINE_BUFFER_SIZE,
+                         ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        this->AddLog("> %s\n", this->input_line_buffer);
+        memset(this->input_line_buffer, 0, CONSOLE_INPUT_LINE_BUFFER_SIZE);
+    }
+
     ScrollToBottom = false;
     ImGui::End();
 }

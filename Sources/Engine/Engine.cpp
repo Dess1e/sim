@@ -76,34 +76,77 @@ void Engine::checkKeyPresses()
 {
     auto delta_time = this->delta_time;
     auto Window = this->main_window;
-    if (glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+
+    //ugly workaround should be replaced with callbacks
+    static int old_state = GLFW_RELEASE;
+    if(glfwGetKey(Window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE)
+        old_state = GLFW_RELEASE;
+    if(glfwGetKey(Window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
     {
-        this->PlayerObject->player_speed = 9;
+        if (old_state == GLFW_RELEASE)
+        {
+            this->EngineGUI->show_console ^= true;
+            old_state = GLFW_PRESS;
+        }
     }
-    else
+
+
+    if (!this->EngineGUI->show_console)
     {
-        this->PlayerObject->player_speed = 3;
+    //all the moving shit
+        if (glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        {
+            this->PlayerObject->player_speed = 9;
+        }
+        else
+        {
+            this->PlayerObject->player_speed = 3;
+        }
+        if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            this->PlayerObject->player_pos += this->PlayerObject->direction * float(delta_time) * this->PlayerObject->player_speed;
+        }
+        if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            this->PlayerObject->player_pos -= this->PlayerObject->right * float(delta_time) * this->PlayerObject->player_speed;
+        }
+        if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            this->PlayerObject->player_pos -= this->PlayerObject->direction * float(delta_time) * this->PlayerObject->player_speed;
+        }
+        if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            this->PlayerObject->player_pos += this->PlayerObject->right * float(delta_time) * this->PlayerObject->player_speed;
+        }
+        if (glfwGetKey(Window, GLFW_KEY_C) == GLFW_PRESS)
+        {
+            this->PlayerObject->ResetPlayerCamera();
+        }
     }
-    if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        this->PlayerObject->player_pos += this->PlayerObject->direction * float(delta_time) * this->PlayerObject->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        this->PlayerObject->player_pos -= this->PlayerObject->right * float(delta_time) * this->PlayerObject->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        this->PlayerObject->player_pos -= this->PlayerObject->direction * float(delta_time) * this->PlayerObject->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        this->PlayerObject->player_pos += this->PlayerObject->right * float(delta_time) * this->PlayerObject->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_C) == GLFW_PRESS)
-    {
-        this->PlayerObject->ResetPlayerCamera();
-    }
+
+
+    //NIKITA NA ZAMETKY!!, VMESTO ETOGO GAVNO LISHNEGO SZNIZU MOJNO SDELAT' TAK	   >---------]
+    //																						 |
+    //																						 |
+    /*																						 |
+    if (glfwGetKey(Window, GLFW_KEY_M) == GLFW_PRESS)										 |
+    {																						 |
+        this->EngineGUI->MouseInputMode  = GLFW_CURSOR_NORMAL;								 |
+        glfwSetInputMode(Window, GLFW_CURSOR, this->EngineGUI->MouseInputMode);				 |
+    }																						 |
+                                                                                             |
+    if (glfwGetKey(Window, GLFW_KEY_N) == GLFW_PRESS)										 |
+    {																						 |
+        this->EngineGUI->MouseInputMode  = GLFW_CURSOR_DISABLED;							 |
+        glfwSetInputMode(Window, GLFW_CURSOR, this->EngineGUI->MouseInputMode);				 |
+    }																						 |
+    *///																					 |
+    int& MouseInputMode = (this->EngineGUI->MouseInputMode);//					   <---------]
+    if (glfwGetKey(Window, GLFW_KEY_M) == GLFW_PRESS)
+        if (MouseInputMode == GLFW_CURSOR_DISABLED)
+            (MouseInputMode = GLFW_CURSOR_NORMAL, glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL));
+        else
+            (MouseInputMode = GLFW_CURSOR_DISABLED, glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED));
 }
 
 void Engine::mainloop()
@@ -128,7 +171,6 @@ void Engine::mainloop()
         glfwPollEvents();
 
         EngineGUI->Draw();
-
     }
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(this->main_window) == 0);
