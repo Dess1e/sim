@@ -5,7 +5,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <Sources/Engine/GUI.h>
+#include <Sources/Engine/GUI/GUI.h>
 #include <Sources/Engine/Player.h>
 #include <Sources/Engine/Model.h>
 

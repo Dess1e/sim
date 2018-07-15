@@ -1,4 +1,4 @@
-#include "Sources/Engine/GUI.h"
+#include "Sources/Engine/GUI/GUI.h"
 
 GUI::GUI(GLFWwindow * inWindow)
 {
@@ -37,13 +37,14 @@ void GUI::Draw()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGui::SetNextWindowSize(ImVec2(1000, 600));
 
-    ImGui::SetNextWindowBgAlpha(0.7f);
-    ImGui::SetNextWindowSize(ImVec2(800, 400));
 
+    ImGui::StyleColorsDark();
     if (this->show_console)
         this->Console->Draw();
 
+    ImGui::ShowDemoWindow();
     ImGui::Render();
     
     int display_w, display_h;
@@ -55,42 +56,4 @@ void GUI::Draw()
     glfwSwapBuffers(Window);
 }
 
-ConsoleGUI::ConsoleGUI()
-{
-    this->is_enabled = false;
-    this->input_line_buffer = new char[CONSOLE_INPUT_LINE_BUFFER_SIZE];
-    this->input_line_buffer[0] = '\0'; //so there will be '' string at start
-    this->console_label = (char *)CONSOLE_DEFAULT_LABEL;
-}
 
-void ConsoleGUI::Clear()
-{
-    this->Buf.clear();
-}
-
-void ConsoleGUI::AddLog(const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    this->Buf.appendfv(fmt, args);
-    va_end(args);
-    this->ScrollToBottom = true;
-}
-
-void ConsoleGUI::Draw(bool *p_opened)
-{
-    ImGui::Begin(CONSOLE_DEFAULT_LABEL, p_opened);
-    ImGui::TextUnformatted(Buf.begin());
-    if (ScrollToBottom)
-        ImGui::SetScrollHere(1.0f);
-    ImGui::SetKeyboardFocusHere();
-    if (ImGui::InputText("", this->input_line_buffer, CONSOLE_INPUT_LINE_BUFFER_SIZE,
-                         ImGuiInputTextFlags_EnterReturnsTrue))
-    {
-        this->AddLog("> %s\n", this->input_line_buffer);
-        memset(this->input_line_buffer, 0, CONSOLE_INPUT_LINE_BUFFER_SIZE);
-    }
-
-    ScrollToBottom = false;
-    ImGui::End();
-}
