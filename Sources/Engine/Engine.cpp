@@ -7,12 +7,17 @@ Engine::Engine()
 
     //Gui init
     this->EngineGUI = new GUI(this->main_window);
-    this->EngineGUI->MouseInputMode  = GLFW_CURSOR_DISABLED;
+
+    //init console handler
+    this->ConsoleHandlerObject = new ConsoleHandler(this);
+
+    //pass consolehandler pointer to consolegui
+    this->EngineGUI->GetConsoleGUI()->setConsoleHandlerPointer(this->ConsoleHandlerObject);
 
     // Player init
     this->PlayerObject = new Player(this->main_window, this->hw_specs.scr_w, this->hw_specs.scr_h);
 
-    this->world = World();
+    this->world = new World();
 
     this->options.mouse_speed = 0.3;
     this->hw_specs.scr_h = 768;

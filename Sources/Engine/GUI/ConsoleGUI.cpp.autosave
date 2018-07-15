@@ -1,4 +1,5 @@
 #include "ConsoleGUI.h"
+#include <Sources/Engine/ConsoleHandler.h>
 
 ConsoleGUI::ConsoleGUI()
 {

@@ -1,10 +1,10 @@
-#include "Sources/Engine/GUI/GUI.h"
+#include "GUI.h"
 
 GUI::GUI(GLFWwindow * inWindow)
 {
     this->InitImGUI(inWindow);
-    this->Console = new ConsoleGUI();
-
+    this->ConsoleGui = new ConsoleGUI();
+    this->MouseInputMode = GLFW_CURSOR_DISABLED;
     this->show_console = false;
 }
 
@@ -14,6 +14,11 @@ GUI::~GUI()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+ConsoleGUI * GUI::GetConsoleGUI()
+{
+    return this->ConsoleGui;
 }
 
 void GUI::InitImGUI(GLFWwindow* InWindow)
@@ -40,7 +45,7 @@ void GUI::Draw()
     ImGui::SetNextWindowSize(ImVec2(1000, 600));
     ImGui::StyleColorsDark();
     if (this->show_console)
-        this->Console->Draw();
+        this->ConsoleGui->Draw();
     ImGui::Render();
     
     int display_w, display_h;

@@ -5,22 +5,25 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <Sources/Engine/GUI/GUI.h>
-#include <Sources/Engine/Player.h>
-#include <Sources/Engine/Model.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <Sources/Common/ResourceLoader.h>
-#include <Sources/Engine/World.h>
+
 #include <map>
 #include <vector>
 #include <string>
-#include <Sources/Common/Shader.h>
+#include <functional>
 
-#define DBG_LEVEL_WARNING 0x0
-#define DBG_LEVEL_ERROR 0x1
-#define DBG_LEVEL_FATAL 0x2
+#include <Sources/Engine/ConsoleHandler.h>
+#include <Sources/Engine/GUI/GUI.h>
+#include <Sources/Engine/GUI/ConsoleGUI.h>
+#include <Sources/Engine/Player.h>
+#include <Sources/Engine/Model.h>
+#include <Sources/Common/ResourceLoader.h>
+#include <Sources/Engine/World.h>
+#include <Sources/Common/Shader.h>
+#include <Sources/Engine/Constants.h>
+#include <Sources/Engine/ConsoleHandler.h>
+
 
 class Engine
 {
@@ -58,6 +61,7 @@ public:
     } hw_specs;
     
 private:
-    World world;
+    World * world;
+    ConsoleHandler * ConsoleHandlerObject;
 };
 #endif
