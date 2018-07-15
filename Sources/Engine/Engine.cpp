@@ -74,9 +74,16 @@ void Engine::useShader(std::string name)
 
 void Engine::checkKeyPresses()
 {
+    /*
+     *
+     * 	THIS UGLY SHITTY FUNCTION SHOULD BE UPDATED
+     *  stop polling events, add callbacks where they needed
+     *  add toggle functions for some objects such as gui
+     *
+    */
+
     auto delta_time = this->delta_time;
     auto Window = this->main_window;
-
     //ugly workaround should be replaced with callbacks
     static int old_state = GLFW_RELEASE;
     if(glfwGetKey(Window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE)
@@ -89,8 +96,6 @@ void Engine::checkKeyPresses()
             old_state = GLFW_PRESS;
         }
     }
-
-
     if (!this->EngineGUI->show_console)
     {
     //all the moving shit

@@ -38,13 +38,9 @@ void GUI::Draw()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     ImGui::SetNextWindowSize(ImVec2(1000, 600));
-
-
     ImGui::StyleColorsDark();
     if (this->show_console)
         this->Console->Draw();
-
-    ImGui::ShowDemoWindow();
     ImGui::Render();
     
     int display_w, display_h;
