@@ -10,8 +10,7 @@ Engine::Engine()
     this->EngineGUI->MouseInputMode  = GLFW_CURSOR_DISABLED;
 
     // Player init
-    this->GamePlayer = new Player();
-    GamePlayer->Init(this->main_window, this->hw_specs.scr_w, this->hw_specs.scr_h);
+    this->PlayerObject = new Player(this->main_window, this->hw_specs.scr_w, this->hw_specs.scr_h);
 
     this->world = World();
 
@@ -73,30 +72,63 @@ void Engine::useShader(std::string name)
     this->gl_variables->current_shader->use();
 }
 
+void Engine::checkKeyPresses()
+{
+    auto delta_time = this->delta_time;
+    auto Window = this->main_window;
+    if (glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        this->PlayerObject->player_speed = 9;
+    }
+    else
+    {
+        this->PlayerObject->player_speed = 3;
+    }
+    if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        this->PlayerObject->player_pos += this->PlayerObject->direction * float(delta_time) * this->PlayerObject->player_speed;
+    }
+    if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        this->PlayerObject->player_pos -= this->PlayerObject->right * float(delta_time) * this->PlayerObject->player_speed;
+    }
+    if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        this->PlayerObject->player_pos -= this->PlayerObject->direction * float(delta_time) * this->PlayerObject->player_speed;
+    }
+    if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        this->PlayerObject->player_pos += this->PlayerObject->right * float(delta_time) * this->PlayerObject->player_speed;
+    }
+    if (glfwGetKey(Window, GLFW_KEY_C) == GLFW_PRESS)
+    {
+        this->PlayerObject->ResetPlayerCamera();
+    }
+}
+
 void Engine::mainloop()
 {
     GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
-    GLuint TimeID = this->gl_variables->current_shader->getUniform("time");
     glm::mat4 mvp;
     mvp = calculateMVP(16/9, 0.1, 100.0);
     auto x = Model("Resources/nanosuit.obj");
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     do
     {
         this->pollTime();
-        GamePlayer->CalcPlayerView(this->EngineGUI->MouseInputMode, this->delta_time, this->options.mouse_speed);
-        GamePlayer->CheckKeyPresses(this->delta_time);
+        PlayerObject->CalcPlayerView(this->EngineGUI->MouseInputMode, this->delta_time, this->options.mouse_speed);
+        this->checkKeyPresses();
+
         mvp = calculateMVP(16/9, 0.1, 100.0);
 
-        glUniform1f(TimeID, (0.0));
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         x.draw(this->gl_variables->current_shader);
         glfwPollEvents();
 
         EngineGUI->Draw();
-        EngineGUI->CheckKeyPresses();
+
     }
     while (glfwGetKey(this->main_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(this->main_window) == 0);
@@ -147,10 +179,10 @@ void Engine::initgl()
 
 glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
 {
-    glm::mat4 proj = glm::perspective(glm::radians(this->GamePlayer->player_fov), ratio, nearz, farz);
-    glm::mat4 view = glm::lookAt(this->GamePlayer->player_pos,
-                                 this->GamePlayer->direction + this->GamePlayer->player_pos,
-                                 this->GamePlayer->up);
+    glm::mat4 proj = glm::perspective(glm::radians(this->PlayerObject->player_fov), ratio, nearz, farz);
+    glm::mat4 view = glm::lookAt(this->PlayerObject->player_pos,
+                                 this->PlayerObject->direction + this->PlayerObject->player_pos,
+                                 this->PlayerObject->up);
     glm::mat4 model = glm::mat4(1);
     glm::mat4 mvp = proj * view * model;
     return mvp;

@@ -29,6 +29,7 @@ public:
     void mainloop();
     void initgl();
     void pollTime();
+    void checkKeyPresses();
     void loadShader(std::string name);
     void useShader(std::string name);
     void debugPrint(unsigned char level, std::string message);
@@ -38,7 +39,7 @@ public:
     GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();
     GUI * EngineGUI;
-    Player * GamePlayer;
+    Player * PlayerObject;
     double last_time;
     double delta_time;
     struct GLVariables

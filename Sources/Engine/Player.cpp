@@ -1,18 +1,15 @@
 #include <Sources/Engine/Player.h>
 
-Player::Player()
+Player::Player(GLFWwindow* InWindow, float scrW, float scrH)
 {
     this->player_speed = 3;
     this->player_pos = glm::vec3(3, 0, 3);
     this->horizontal_angle = 0;
     this->vertical_angle = 0;
     this->player_fov = 90.0;
-}
 
-void Player::Init(GLFWwindow* InWindow, float scrW, float scrH)
-{
     this->Window = InWindow;
-    this->ScreenWidth = scrH;
+    this->ScreenWidth = scrW;
     this->ScreenHeight = scrH;
 }
 
@@ -65,34 +62,3 @@ void Player::ResetPlayerCamera()
     vertical_angle = 0;
 }
 
-void Player::CheckKeyPresses(double indelta_time)
-{
-    if (glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        this->player_speed = 9;
-    }
-    else
-    {
-        this->player_speed = 3;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        this->player_pos += this->direction * float(indelta_time) * this->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        this->player_pos -= this->right * float(indelta_time) * this->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        this->player_pos -= this->direction * float(indelta_time) * this->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        this->player_pos += this->right * float(indelta_time) * this->player_speed;
-    }
-    if (glfwGetKey(Window, GLFW_KEY_C) == GLFW_PRESS)
-    {
-        this->ResetPlayerCamera();
-    }
-}

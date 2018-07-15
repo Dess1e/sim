@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 project (sim)
 
-file(GLOB_RECURSE SHADERS shaders/*.glsl)
+file(GLOB_RECURSE SHADERS Shaders/*.glsl)
 file(GLOB_RECURSE SOURCES "Sources/*.cpp" "Sources/*.hpp" "Sources/*.h")
 
 add_executable( ${PROJECT_NAME}

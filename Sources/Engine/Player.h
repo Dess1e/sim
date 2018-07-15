@@ -8,13 +8,11 @@
 class Player
 {
 public:
-    Player();
+    Player(GLFWwindow *InWindow, float scrW, float scrH);
 
     // Functiions
-    void Init(GLFWwindow* InWindow, float scrW, float scrH);
     void CalcPlayerView(int MouseInputMode, double indelta_time, float mouse_speed);
     void ResetPlayerCamera();
-    void CheckKeyPresses(double indelta_time);
 
     // Variables
     glm::vec3 player_pos;
