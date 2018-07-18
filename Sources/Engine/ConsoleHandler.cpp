@@ -16,6 +16,8 @@ std::string ConsoleHandler::ParseCommand(char *input, unsigned int input_len)
     }
     else if (input_str == "help")
         return "Here should be help";
+    else if (input_str == "quit" || input_str == "exit")
+        this->engine->quit();
     else
         return "Unable to parse command.";
 }
