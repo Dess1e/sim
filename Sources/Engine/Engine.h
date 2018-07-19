@@ -23,11 +23,14 @@
 #include <Sources/Common/Shader.h>
 #include <Sources/Engine/Constants.h>
 #include <Sources/Engine/ConsoleHandler.h>
+#include <Sources/Engine/Object.h>
 
 
 class Engine
 {
+
 public:
+    static Engine * getEngine() {return Engine::self;}
     Engine();
     void mainloop();
     void initgl();
@@ -61,6 +64,7 @@ public:
     } hw_specs;
     
 private:
+    static Engine * self; //pointer to self
     World * world;
     ConsoleHandler * ConsoleHandlerObject;
 };

@@ -1,7 +1,22 @@
 #include <Sources/Engine/Engine.h>
+/*	#TODO
+ *
+ * Engine v2!
+ * 1. Make private what should be private and create getters and setters
+ * 2. Rm player class add camera object (calculate mvps there)
+ * 3. Try to make variables visible to console to manipulate 'em in runtime
+ * 4. Add callback, do not poll everything
+ * 5. Init hw specs dynamically
+ * 6. Exceptions...
+ *
+*/
+Engine * Engine::self;
 
 Engine::Engine()
 {
+    //init static ptr to self
+    self = this;
+
     //init opengl and glfw at first
     this->initgl();
 
@@ -161,10 +176,10 @@ void Engine::checkKeyPresses()
 
 void Engine::mainloop()
 {
-    GLuint MatrixID = this->gl_variables->current_shader->getUniform("model_projection_mat");
-    glm::mat4 mvp;
-    mvp = calculateMVP(16/9, 0.1, 100.0);
-    auto x = Model("Resources/nanosuit.obj");
+    auto x = Object(glm::vec3(2, 2, 2),
+                    glm::vec3(30, 30, 30),
+                    glm::vec3(2, 5, 2),
+                    "Resources/nanosuit.obj");
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     do
@@ -173,11 +188,9 @@ void Engine::mainloop()
         PlayerObject->CalcPlayerView(this->EngineGUI->MouseInputMode, this->delta_time, this->options.mouse_speed);
         this->checkKeyPresses();
 
-        mvp = calculateMVP(16/9, 0.1, 100.0);
 
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        x.draw(this->gl_variables->current_shader);
+        x.render(); //if you render before clear you can't see it
         glfwPollEvents();
 
         EngineGUI->Draw();
@@ -229,16 +242,7 @@ void Engine::initgl()
     glDepthFunc(GL_LESS);
 }
 
-glm::mat4 Engine::calculateMVP(float ratio, float nearz, float farz)
-{
-    glm::mat4 proj = glm::perspective(glm::radians(this->PlayerObject->player_fov), ratio, nearz, farz);
-    glm::mat4 view = glm::lookAt(this->PlayerObject->player_pos,
-                                 this->PlayerObject->direction + this->PlayerObject->player_pos,
-                                 this->PlayerObject->up);
-    glm::mat4 model = glm::mat4(1);
-    glm::mat4 mvp = proj * view * model;
-    return mvp;
-}
+
 
 void Engine::pollTime()
 {
