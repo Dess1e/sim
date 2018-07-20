@@ -3,14 +3,21 @@
  *
  * Engine v2!
  * 1. Make private what should be private and create getters and setters
- * 2. Rm player class add camera object (calculate mvps there)
+ * 2. Rm player class add camera object (calculate mvps there) //why?
  * 3. Try to make variables visible to console to manipulate 'em in runtime
  * 4. Add callback, do not poll everything
  * 5. Init hw specs dynamically
  * 6. Exceptions...
+ * 7. Make mesh map so before loading new mesh check if the same mesh is already loaded
+ * 	  so we dont load same meshes twice (How meshes should be identified?)
+ * 8. Add a transformation class for object class
+ * 9. Move all to heap in engine class to make all accessible
  *
 */
+
+
 Engine * Engine::self;
+
 
 Engine::Engine()
 {
@@ -180,6 +187,10 @@ void Engine::mainloop()
                     glm::vec3(30, 30, 30),
                     glm::vec3(2, 5, 2),
                     "Resources/nanosuit.obj");
+    auto y = Object(glm::vec3(0, 0, 0),
+                    glm::vec3(0, 0, 0),
+                    glm::vec3(0.75, 0.75, 0.75),
+                    "Resources/nanosuit.obj");
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     do
@@ -191,6 +202,7 @@ void Engine::mainloop()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         x.render(); //if you render before clear you can't see it
+        y.render();
         glfwPollEvents();
 
         EngineGUI->Draw();
