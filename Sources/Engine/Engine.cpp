@@ -41,7 +41,7 @@ Engine::Engine()
 
     this->world = new World();
 
-    this->options.mouse_speed = 0.3;
+    this->options.mouse_speed = 0.3f;
     this->hw_specs.scr_h = 768;
     this->hw_specs.scr_w = 1366;
 
@@ -156,29 +156,20 @@ void Engine::checkKeyPresses()
         }
     }
 
-
-    //NIKITA NA ZAMETKY!!, VMESTO ETOGO GAVNO LISHNEGO SZNIZU MOJNO SDELAT' TAK	   >---------]
-    //																						 |
-    //																						 |
-    /*																						 |
-    if (glfwGetKey(Window, GLFW_KEY_M) == GLFW_PRESS)										 |
-    {																						 |
-        this->EngineGUI->MouseInputMode  = GLFW_CURSOR_NORMAL;								 |
-        glfwSetInputMode(Window, GLFW_CURSOR, this->EngineGUI->MouseInputMode);				 |
-    }																						 |
-                                                                                             |
-    if (glfwGetKey(Window, GLFW_KEY_N) == GLFW_PRESS)										 |
-    {																						 |
-        this->EngineGUI->MouseInputMode  = GLFW_CURSOR_DISABLED;							 |
-        glfwSetInputMode(Window, GLFW_CURSOR, this->EngineGUI->MouseInputMode);				 |
-    }																						 |
-    *///																					 |
-    int& MouseInputMode = (this->EngineGUI->MouseInputMode);//					   <---------]
+    int& MouseInputMode = (this->EngineGUI->MouseInputMode);
     if (glfwGetKey(Window, GLFW_KEY_M) == GLFW_PRESS)
+    {
         if (MouseInputMode == GLFW_CURSOR_DISABLED)
-            (MouseInputMode = GLFW_CURSOR_NORMAL, glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL));
+        {
+            MouseInputMode = GLFW_CURSOR_NORMAL;
+            glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
         else
-            (MouseInputMode = GLFW_CURSOR_DISABLED, glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED));
+        {
+            MouseInputMode = GLFW_CURSOR_DISABLED;
+            glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+    }
 }
 
 void Engine::mainloop()
@@ -226,8 +217,8 @@ void Engine::initgl()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //macos comp
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    this->main_window = glfwCreateWindow(1366, 768, "main window name", 0, 0);
-    if (this->main_window == NULL)
+    this->main_window = glfwCreateWindow(1366, 768, "main window name", nullptr, nullptr);
+    if (this->main_window == nullptr)
     {
         fprintf(stderr, "Failed to create GLFW window, exiting...\n");
         glfwTerminate();

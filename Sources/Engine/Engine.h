@@ -52,7 +52,7 @@ public:
     {
         std::map<std::string, Shader *> shaders;
         Shader * current_shader;
-    } * gl_variables = new GLVariables;
+    } * gl_variables;
     struct Options
     {
         float mouse_speed;

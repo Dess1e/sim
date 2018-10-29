@@ -26,8 +26,8 @@ Shader::Shader(std::string _shader_name)
     glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if ( InfoLogLength > 0 )
     {
-        std::vector<char> ProgramErrorMessage(InfoLogLength+1);
-        glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+        std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+        glGetProgramInfoLog(ProgramID, InfoLogLength, nullptr, &ProgramErrorMessage[0]);
         printf("%s\n", &ProgramErrorMessage[0]);
     }
 
@@ -74,7 +74,7 @@ void Shader::Load(std::string ShaderName, std::string Filename, GLuint& ShaderID
     // Compile Shader
     printf("Compiling vertex shader : %s\n", shader_name.c_str());
     char const* SourcePointer = ShaderCode.c_str();
-    glShaderSource(ShaderID, 1, &SourcePointer , NULL);
+    glShaderSource(ShaderID, 1, &SourcePointer, nullptr);
     glCompileShader(ShaderID);
 
     // Check Shader
@@ -83,12 +83,12 @@ void Shader::Load(std::string ShaderName, std::string Filename, GLuint& ShaderID
     if ( InfoLogLength > 0 )
     {
         std::vector<char> ShaderErrorMessage(InfoLogLength+1);
-        glGetShaderInfoLog(ShaderID, InfoLogLength, NULL, &ShaderErrorMessage[0]);
+        glGetShaderInfoLog(ShaderID, InfoLogLength, nullptr, &ShaderErrorMessage[0]);
         printf("%s\n", &ShaderErrorMessage[0]);
     }
 }
 
-GLuint Shader::getUniform(std::string uniform_name)
+GLint Shader::getUniform(std::string uniform_name)
 {
     return glGetUniformLocation(this->id, uniform_name.c_str());
 }
