@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>
 #include <string>
+#include <map>
 
 class Object;
 

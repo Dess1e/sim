@@ -26,7 +26,7 @@ include_directories(
         ThirdParty/imgui/
         ThirdParty/glfw/include/
         ThirdParty/glm/
-        ThirdParty/glew0/include/
+        ThirdParty/glew/include/
         ThirdParty/assimp/include/
         ThirdParty/bullet/src/
         .
@@ -54,7 +54,5 @@ target_link_libraries(sim
 
 add_custom_command(TARGET sim PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Shaders/ $<TARGET_FILE_DIR:sim>/Shaders)
-add_custom_command(TARGET sim PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Textures/ $<TARGET_FILE_DIR:sim>/Textures)
 add_custom_command(TARGET sim PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Resources/ $<TARGET_FILE_DIR:sim>/Resources)
