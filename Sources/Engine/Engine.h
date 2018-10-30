@@ -45,6 +45,7 @@ public:
     GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();
     GUI * EngineGUI;
+    AssetsManager * AssetsManagerObject;
     Player * PlayerObject;
     double last_time;
     double delta_time;

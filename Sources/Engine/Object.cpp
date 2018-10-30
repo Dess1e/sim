@@ -2,30 +2,37 @@
 #include <Sources/Engine/Engine.h>
 
 
-Object::Object(glm::vec3 initial_coords, glm::vec3 init_rotations_deg, glm::vec3 initial_scale, std::string mesh_path)
+Object::Object(glm::vec3 initial_coords, glm::vec3 init_rotations_deg, glm::vec3 initial_scale, std::string asset_alias)
+{
+    this->coords3 = initial_coords;
+    this->rotation3 = init_rotations_deg;
+    this->scale3 = initial_scale;
+    this->recalculateModelMatrix();
+    this->object_mesh = Engine::getEngine()->AssetsManagerObject->getModelByAlias(asset_alias);
+}
+
+Object::Object(std::string asset_alias)
+{
+    //this->internal_name =
+    this->model_matrix = glm::mat4(1);
+    this->object_mesh = Engine::getEngine()->AssetsManagerObject->getModelByAlias(asset_alias);
+}
+
+void Object::recalculateModelMatrix()
 {
     auto model_mat = glm::mat4(1);
     //translate
-    model_mat = glm::translate(model_mat, initial_coords);
+    model_mat = glm::translate(model_mat, this->coords3);
     //rotate (for every angle)
     for (int i = 0; i < 3; ++i)
     {
         auto v = glm::vec3(0);
         v[i] = 1;
-        model_mat = glm::rotate(model_mat, glm::radians(init_rotations_deg[i]), v);
+        model_mat = glm::rotate(model_mat, glm::radians(this->rotation3[i]), v);
     }
     //scale
-    model_mat = glm::scale(model_mat, initial_scale);
+    model_mat = glm::scale(model_mat, this->scale3);
     this->model_matrix = model_mat;
-
-    this->object_mesh = new Model(mesh_path);
-}
-
-Object::Object(std::string mesh_path)
-{
-    //this->internal_name =
-    this->model_matrix = glm::mat4(1);
-    this->object_mesh = new Model(mesh_path);
 }
 
 void Object::render()
@@ -51,11 +58,13 @@ glm::mat4 Object::calculateMVP(float ratio, float nearz, float farz)
 
 void Object::translate(glm::vec3 translation_vec)
 {
+    this->coords3 += translation_vec;
     this->model_matrix = glm::translate(this->getModelMatrix(), translation_vec);
 }
 
 void Object::rotate(glm::vec3 rotation_vec)
 {
+    this->rotation3 += rotation_vec;
     for (int i = 0; i < 3; ++i)
     {
         auto v = glm::vec3(0);
@@ -66,6 +75,7 @@ void Object::rotate(glm::vec3 rotation_vec)
 
 void Object::scale(glm::vec3 scale_vec)
 {
+    this->scale3 *= scale_vec;
     this->model_matrix = glm::scale(this->getModelMatrix(), scale_vec);
 }
 

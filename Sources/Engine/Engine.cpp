@@ -24,6 +24,9 @@ Engine::Engine()
     //init static ptr to self
     self = this;
 
+    //init gl vars structs
+    this->gl_variables = new Engine::GLVariables;
+
     //init opengl and glfw at first
     this->initgl();
 
@@ -35,6 +38,9 @@ Engine::Engine()
 
     //pass consolehandler pointer to consolegui
     this->EngineGUI->GetConsoleGUI()->setConsoleHandlerPointer(this->ConsoleHandlerObject);
+
+    //init assets manager and preload all assets
+    this->AssetsManagerObject = new AssetsManager(std::string(DEFAULT_RESOURCES_FOLDER));
 
     // Player init
     this->PlayerObject = new Player(this->main_window, this->hw_specs.scr_w, this->hw_specs.scr_h);
@@ -174,14 +180,15 @@ void Engine::checkKeyPresses()
 
 void Engine::mainloop()
 {
-    auto x = Object(glm::vec3(2, 2, 2),
-                    glm::vec3(30, 30, 30),
-                    glm::vec3(2, 5, 2),
-                    "Resources/nanosuit.obj");
-    auto y = Object(glm::vec3(0, 0, 0),
-                    glm::vec3(0, 0, 0),
-                    glm::vec3(0.75, 0.75, 0.75),
-                    "Resources/nanosuit.obj");
+    //auto x = Object(glm::vec3(2, 2, 2),
+    //                glm::vec3(30, 30, 30),
+    //                glm::vec3(2, 5, 2),
+    //                "Resources/nanosuit.obj");
+    //auto y = Object(glm::vec3(0, 0, 0),
+    //                glm::vec3(0, 0, 0),
+    //                glm::vec3(0.75, 0.75, 0.75),
+    //                "Resources/nanosuit.obj");
+    this->world->spawnObject("nanosuit", {0, 0, 0}, {0, 0, 0}, {0, 0, 0});
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     do
@@ -192,8 +199,8 @@ void Engine::mainloop()
 
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        x.render(); //if you render before clear you can't see it
-        y.render();
+        //if you render before clear you can't see it
+        this->world->renderAll();
         glfwPollEvents();
 
         EngineGUI->Draw();
