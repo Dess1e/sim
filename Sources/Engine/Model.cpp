@@ -1,6 +1,7 @@
 #include "Sources/Engine/Model.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <ThirdParty/stb/stb_image.h>
+#include <Sources/Engine/Engine.h>
 
 Model::Model(const std::string &path)
 {
@@ -9,6 +10,13 @@ Model::Model(const std::string &path)
 
 void Model::draw(Shader *pShader)
 {
+    if (this->meshes.empty())
+    {
+        Engine::getEngine()->debugPrint(Engine::DebugLevel::Error,
+                                        "Model from dir " + this->directory + " have zero meshes");
+        return;
+
+    }
     for (auto& mesh : this->meshes)
     {
         mesh.draw(pShader);

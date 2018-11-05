@@ -2,20 +2,15 @@
 #include <Sources/Engine/Engine.h>
 
 
-Object::Object(glm::vec3 initial_coords, glm::vec3 init_rotations_deg, glm::vec3 initial_scale, std::string asset_alias)
+Object::Object(glm::vec3 initial_coords, glm::vec3 init_rotations_deg, glm::vec3 initial_scale, std::string asset_alias, uint64_t id)
 {
     this->coords3 = initial_coords;
     this->rotation3 = init_rotations_deg;
     this->scale3 = initial_scale;
     this->recalculateModelMatrix();
     this->object_mesh = Engine::getEngine()->AssetsManagerObject->getModelByAlias(asset_alias);
-}
-
-Object::Object(std::string asset_alias)
-{
-    //this->internal_name =
-    this->model_matrix = glm::mat4(1);
-    this->object_mesh = Engine::getEngine()->AssetsManagerObject->getModelByAlias(asset_alias);
+    this->asset_alias = asset_alias;
+    this->object_id = id;
 }
 
 void Object::recalculateModelMatrix()
@@ -82,4 +77,14 @@ void Object::scale(glm::vec3 scale_vec)
 glm::mat4 Object::getModelMatrix() const
 {
    return this->model_matrix;
+}
+
+std::string Object::getObjectAssetAlias()
+{
+    return this->asset_alias;
+}
+
+uint64_t Object::getObjectID()
+{
+    return this->object_id;
 }

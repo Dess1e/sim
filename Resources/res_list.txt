@@ -1,1 +1,1 @@
-Resources/nanosuit nanosuit
+Resources/nanosuit/nanosuit.obj nanosuit

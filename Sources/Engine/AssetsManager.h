@@ -14,6 +14,7 @@ public:
 private:
     void loadAllAssets(const std::string& assets_folder);
     std::map<std::string, Model *> model_map;
+    int loaded_models_count;
 };
 
 

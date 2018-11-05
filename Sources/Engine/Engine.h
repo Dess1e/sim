@@ -30,6 +30,14 @@ class Engine
 {
 
 public:
+
+    enum class DebugLevel {
+        Warning = 0x0,
+        Error = 0x1,
+        Fatal = 0x2
+    };
+
+
     static Engine * getEngine() {return Engine::self;}
     Engine();
     void mainloop();
@@ -38,9 +46,10 @@ public:
     void checkKeyPresses();
     void loadShader(std::string name);
     void useShader(std::string name);
-    void debugPrint(unsigned char level, std::string message);
+    void debugPrint(DebugLevel level, std::string message);
     void quit();
     glm::mat4 calculateMVP(float ratio, float nearz, float farz);
+
 
     GLFWwindow* main_window;
     ResourceLoader resource_loader = ResourceLoader();

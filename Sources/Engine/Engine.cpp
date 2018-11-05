@@ -40,7 +40,7 @@ Engine::Engine()
     this->EngineGUI->GetConsoleGUI()->setConsoleHandlerPointer(this->ConsoleHandlerObject);
 
     //init assets manager and preload all assets
-    this->AssetsManagerObject = new AssetsManager(std::string(DEFAULT_RESOURCES_FOLDER));
+    this->AssetsManagerObject = new AssetsManager("Resources");
 
     // Player init
     this->PlayerObject = new Player(this->main_window, this->hw_specs.scr_w, this->hw_specs.scr_h);
@@ -53,19 +53,20 @@ Engine::Engine()
 
 }
 
-void Engine::debugPrint(unsigned char level, std::string message)
+void Engine::debugPrint(DebugLevel level, std::string message)
 {
+    std::string mes = message + "\n";
     switch (level)
     {
-    case DBG_LEVEL_WARNING:
-        printf("[Warning]: %s", message.c_str());
+    case DebugLevel::Warning:
+        printf("[Warning]: %s", mes.c_str());
         break;
-    case DBG_LEVEL_ERROR:
-        printf("[ERROR]: %s", message.c_str());
+    case DebugLevel::Error:
+        printf("[ERROR]: %s", mes.c_str());
         break;
     default:
-    case DBG_LEVEL_FATAL:
-        printf("[FATAL]: %s", message.c_str());
+    case DebugLevel::Fatal:
+        printf("[FATAL]: %s", mes.c_str());
         this->quit();
     }
 }
@@ -89,7 +90,7 @@ void Engine::loadShader(std::string name)
     catch (ShaderCreateException& e)
     {
         auto error_message = e.what();
-        this->debugPrint(DBG_LEVEL_FATAL, error_message);
+        this->debugPrint(Engine::DebugLevel::Error, error_message);
     }
 }
 
@@ -98,7 +99,7 @@ void Engine::useShader(std::string name)
     auto shader_map = this->gl_variables->shaders;
     if (!shader_map.count(name))
     {
-        this->debugPrint(DBG_LEVEL_ERROR, "No compiled/linked shader with name %s found");
+        this->debugPrint(Engine::DebugLevel::Error, "No compiled/linked shader with name %s found");
         return;
     }
     this->gl_variables->current_shader = shader_map[name];
@@ -188,8 +189,8 @@ void Engine::mainloop()
     //                glm::vec3(0, 0, 0),
     //                glm::vec3(0.75, 0.75, 0.75),
     //                "Resources/nanosuit.obj");
-    this->world->spawnObject("nanosuit", {0, 0, 0}, {0, 0, 0}, {0, 0, 0});
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    this->world->spawnObject("nanosuit", {1, 1, 1}, {1, 1, 1}, {1, 1, 1});
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
     do
     {
