@@ -60,7 +60,7 @@ void Mesh::draw(Shader *pShader)
         else if (name == "texture_height")
             number = std::to_string(heightNr++);
         auto uniform = pShader->getUniform(name + number);
-        glUniform1i(uniform, i);
+        glUniform1i(uniform, static_cast<GLint>(i));
         glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
     }
     glBindVertexArray(this->vao_id);

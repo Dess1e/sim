@@ -34,7 +34,7 @@ void Model::loadModel(const std::string &assets_folder, const std::string& name)
         printf("assimp error: %s\n", importer.GetErrorString());
         return;
     }
-    directory = path.substr(0, path.find_last_of('/'));
+    this->directory = path.substr(0, path.find_last_of('/'));
     this->processNode(scene->mRootNode, scene);
 }
 
