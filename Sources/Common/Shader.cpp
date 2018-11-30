@@ -11,13 +11,13 @@ Shader::Shader(std::string _shader_name)
 
     Load(_shader_name, "fs.glsl", FragmentShaderID);
     Load(_shader_name, "vs.glsl", VertexShaderID);
-    Load(_shader_name, "gs.glsl", GeometryShaderID);
+//    Load(_shader_name, "gs.glsl", GeometryShaderID);
 
     // Link the program
     printf("Linking shader...\n");
     GLuint ProgramID = glCreateProgram();
     glAttachShader(ProgramID, VertexShaderID);
-    glAttachShader(ProgramID, GeometryShaderID);
+//    glAttachShader(ProgramID, GeometryShaderID);
     glAttachShader(ProgramID, FragmentShaderID);
     glLinkProgram(ProgramID);
 
@@ -31,11 +31,11 @@ Shader::Shader(std::string _shader_name)
         printf("%s\n", &ProgramErrorMessage[0]);
     }
 
-    glDetachShader(ProgramID, GeometryShaderID);
+//    glDetachShader(ProgramID, GeometryShaderID);
     glDetachShader(ProgramID, VertexShaderID);
     glDetachShader(ProgramID, FragmentShaderID);
 
-    glDeleteShader(GeometryShaderID);
+//    glDeleteShader(GeometryShaderID);
     glDeleteShader(VertexShaderID);
     glDeleteShader(FragmentShaderID);
 

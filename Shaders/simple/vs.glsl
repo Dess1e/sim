@@ -7,16 +7,11 @@ layout(location = 2) in vec2 v_tex_coords;
 
 uniform mat4 model_projection_mat;
 
-out VS_OUT 
-{
-    vec2 tex_coords;
-} vs_out;
+out vec2 out_tex_coords;
 
 void main()
 {
-    vec3 sdada = v_pos;
-
-    gl_Position = model_projection_mat * vec4(sdada, 1.0);
-    vs_out.tex_coords = v_tex_coords;
+    gl_Position = model_projection_mat * vec4(v_pos, 1.0);
+    out_tex_coords = v_tex_coords;
 }
 
