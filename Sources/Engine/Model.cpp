@@ -3,9 +3,9 @@
 #include <ThirdParty/stb/stb_image.h>
 #include <Sources/Engine/Engine.h>
 
-Model::Model(const std::string &path)
+Model::Model(const std::string &path, const std::string& name)
 {
-    this->loadModel(path);
+    this->loadModel(path, name);
 }
 
 void Model::draw(Shader *pShader)
@@ -23,9 +23,10 @@ void Model::draw(Shader *pShader)
     }
 }
 
-void Model::loadModel(const std::string &path)
+void Model::loadModel(const std::string &assets_folder, const std::string& name)
 {
     Assimp::Importer importer;
+    std::string path = assets_folder + "/" + name + "/" + name + ".obj";
     const aiScene * scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
