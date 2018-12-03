@@ -1,2 +1,4 @@
 .vscode/
+CMakeCache
+CMakeFiles/
 CMakeLists.txt.*
