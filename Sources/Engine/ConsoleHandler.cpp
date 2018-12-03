@@ -20,5 +20,4 @@ std::string ConsoleHandler::ParseCommand(char *input, unsigned int input_len)
         this->engine->quit();
     else
         return "Unable to parse command.";
-    return "Error"; //if somehow control gets here
 }

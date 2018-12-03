@@ -2,3 +2,6 @@
 CMakeCache
 CMakeFiles/
 CMakeLists.txt.*
+CMakeLists.txt.user
+Resources/*
+!Resources/nanosuit

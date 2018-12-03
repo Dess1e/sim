@@ -4,7 +4,6 @@
 #include <Sources/Engine/Model.h>
 #include <map>
 #include <filesystem>
-#include <dirent.h>
 
 
 class AssetsManager

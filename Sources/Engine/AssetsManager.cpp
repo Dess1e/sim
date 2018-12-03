@@ -1,5 +1,13 @@
 #include "AssetsManager.h"
 
+#ifdef __linux__
+#include "dirent.h"
+#endif
+
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 AssetsManager::AssetsManager()
 {
 }
@@ -21,6 +29,27 @@ void AssetsManager::loadAllAssets(const std::string& assets_folder)
     this->loaded_models_count = counter;
 }
 
+#ifdef WIN32
+std::vector<std::string> AssetsManager::_get_directories(const std::string& directory)
+{
+    std::vector<std::string> res;
+    WIN32_FIND_DATA data;
+    HANDLE hFind = FindFirstFile((directory + "/*").c_str(), &data);
+    if (hFind != INVALID_HANDLE_VALUE)
+    {
+        do
+        {
+            std::string dir_name(data.cFileName);
+            if (dir_name == "." || dir_name == "..")
+                continue;
+            res.push_back(data.cFileName);
+        } while (FindNextFile(hFind, &data));
+        FindClose(hFind);
+    }
+    return res;
+}
+#endif
+
 #ifdef __linux__
 std::vector<std::string> AssetsManager::_get_directories(const std::string& directory)
 {
@@ -36,13 +65,6 @@ std::vector<std::string> AssetsManager::_get_directories(const std::string& dire
             result.push_back(dir_name);
         }
     return result;
-}
-#endif
-
-#ifdef WIN32
-std::vector<std::string> AssetsManager::_get_directories(const std::string& directory)
-{
-    assert(false);
 }
 #endif
 
