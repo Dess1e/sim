@@ -64,7 +64,6 @@ void Engine::debugPrint(DebugLevel level, std::string message)
     case DebugLevel::Error:
         printf("[ERROR]: %s", mes.c_str());
         break;
-    default:
     case DebugLevel::Fatal:
         printf("[FATAL]: %s", mes.c_str());
         this->quit();
